@@ -1,0 +1,72 @@
+generator client {
+    provider = "prisma-client"
+    output   = "../src/lib/generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model Prefectures {
+    id            Int           @id @default(autoincrement())
+    name          String
+    createdAt     DateTime      @default(now())
+    updatedAt     DateTime      @updatedAt
+    userAddresses UserAddress[]
+}
+
+model User {
+    id                 Int                 @id @default(autoincrement())
+    nickname           String
+    email              String              @unique
+    birthday           DateTime?
+    sex                Int?
+    createdAt          DateTime            @default(now())
+    updatedAt          DateTime            @updatedAt
+    userFavoritePlaces UserFavoritePlace[]
+}
+
+model UserAddress {
+    id            Int         @id @default(autoincrement())
+    name          String?
+    addressType   Int
+    postalCode    String
+    prefecturesId Int
+    prefectures   Prefectures @relation(fields: [prefecturesId], references: [id])
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
+}
+
+model PlaceCategory {
+    id        Int      @id @default(autoincrement())
+    name      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    places    Place[]
+}
+
+model Place {
+    id                 Int                 @id @default(autoincrement())
+    name               String
+    latitude           Decimal?
+    longitude          Decimal?
+    description        String?
+    businessHoursFrom  DateTime?
+    businessHoursTo    DateTime?
+    createdAt          DateTime            @default(now())
+    updatedAt          DateTime            @updatedAt
+    categories         PlaceCategory[]
+    userFavoritePlaces UserFavoritePlace[]
+}
+
+model UserFavoritePlace {
+    id        Int      @id @default(autoincrement())
+    userId    Int
+    user      User     @relation(fields: [userId], references: [id])
+    placeId   Int
+    place     Place    @relation(fields: [placeId], references: [id])
+    visited   Boolean  @default(false)
+    memo      String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

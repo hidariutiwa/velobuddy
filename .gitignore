@@ -46,3 +46,5 @@ next-env.d.ts
 .gemini/settings.json
 .claude/settings.local.json
 *.skill
+
+/src/lib/generated/prisma
