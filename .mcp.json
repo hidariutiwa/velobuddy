@@ -1,0 +1,16 @@
+{
+	"mcpServers": {
+		"ESLint": {
+			"type": "stdio",
+			"command": "npx",
+			"args": ["@eslint/mcp@latest"]
+		},
+		"next-devtools": {
+			"command": "npx",
+			"args": ["-y", "next-devtools-mcp@latest"]
+		},
+		"docs-langchain": {
+			"url": "https://docs.langchain.com/mcp"
+		}
+	}
+}
