@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="ja">
-			<body className={`${notoSansJp} antialiased`}>
+			<body className={`${notoSansJp.className} antialiased`}>
 				<div className="h-screen w-screen">{children}</div>
 			</body>
 		</html>
