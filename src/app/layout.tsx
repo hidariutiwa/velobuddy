@@ -1,4 +1,6 @@
 import "./globals.css";
+import Header from "@/components/layout/header";
+import Navigation from "@/components/layout/navigation";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
@@ -19,7 +21,11 @@ export default function RootLayout({
 		<html lang="ja">
 			<body className={`${notoSansJp.className} antialiased`}>
 				<SessionProvider>
-					<div className="h-screen w-screen">{children}</div>
+					<div className="flex h-screen w-screen flex-col items-center justify-center text-zinc-700">
+						<Header />
+						{children}
+						<Navigation />
+					</div>
 				</SessionProvider>
 			</body>
 		</html>
