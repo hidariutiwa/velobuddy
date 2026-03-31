@@ -1,7 +1,7 @@
 "use client";
 
 import Navigation from "@/components/layout/navigation";
-import MapPlaceholder from "@/components/map/MapPlaceholder";
+import GoogleMap from "@/components/map/GoogleMap";
 import { useState } from "react";
 
 const categories = ["すべて", "カフェ", "公園", "食事", "観光"] as const;
@@ -13,9 +13,16 @@ export default function Home() {
 	return (
 		<div className="relative mx-auto h-screen max-w-[390px] overflow-hidden">
 			{/* Map background (full screen) */}
-			<MapPlaceholder
+			<GoogleMap
 				className="absolute inset-0 h-full w-full"
-				showPin
+				markers={[
+					{
+						id: "yoyogi",
+						lat: 35.6714,
+						lng: 139.6956,
+						label: "代々木公園",
+					},
+				]}
 			/>
 
 			{/* Status bar spacer */}
