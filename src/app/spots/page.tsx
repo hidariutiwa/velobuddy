@@ -1,5 +1,6 @@
 "use client";
 
+import { Header } from "@/components/layout/header";
 import Navigation from "@/components/layout/navigation";
 import Link from "next/link";
 import { useState } from "react";
@@ -73,52 +74,34 @@ export default function SpotsPage() {
 		return matchesCategory && matchesQuery;
 	});
 
+	const filterAction = (
+		<button className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+			<svg
+				width="16"
+				height="16"
+				viewBox="0 0 16 16"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="1.5"
+				strokeLinecap="round"
+			>
+				<path d="M4 5H12M2 8H14M5 11H11" />
+			</svg>
+		</button>
+	);
+
 	return (
-		<div className="mx-auto flex h-screen max-w-[390px] flex-col bg-white">
-			{/* Header */}
-			<div className="bg-white px-4 pt-11 pb-3 shadow-sm">
-				<div className="flex items-center justify-between">
-					<div className="flex items-center gap-3">
-						<Link
-							href="/"
-							className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-100 text-zinc-700"
-						>
-							<svg
-								width="16"
-								height="16"
-								viewBox="0 0 16 16"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth="1.5"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							>
-								<path d="M10 12L6 8L10 4" />
-							</svg>
-						</Link>
-						<h1 className="text-xl font-bold text-zinc-900">
-							スポット一覧
-						</h1>
-					</div>
-					<button className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-100 text-zinc-700">
-						<svg
-							width="16"
-							height="16"
-							viewBox="0 0 16 16"
-							fill="none"
-							stroke="currentColor"
-							strokeWidth="1.5"
-							strokeLinecap="round"
-						>
-							<path d="M4 5H12M2 8H14M5 11H11" />
-						</svg>
-					</button>
-				</div>
-			</div>
+		<div className="mx-auto flex h-screen max-w-[390px] flex-col bg-blue-50">
+			<Header
+				variant="sub"
+				title="スポット"
+				backHref="/"
+				actionButton={filterAction}
+			/>
 
 			{/* Search bar */}
-			<div className="bg-white px-4 pt-3">
-				<div className="flex items-center gap-2 rounded-xl bg-zinc-100 px-3 py-2.5">
+			<div className="bg-blue-50 px-4 pt-3">
+				<div className="flex items-center gap-2 rounded-full bg-white px-4 py-2.5 shadow-sm">
 					<svg
 						width="18"
 						height="18"
@@ -143,15 +126,15 @@ export default function SpotsPage() {
 			</div>
 
 			{/* Filter chips */}
-			<div className="flex gap-2 overflow-x-auto bg-white px-4 py-3 [scrollbar-width:none]">
+			<div className="flex gap-2 overflow-x-auto bg-white px-3 py-2 [scrollbar-width:none]">
 				{filterCategories.map((cat) => (
 					<button
 						key={cat}
 						onClick={() => setActiveFilter(cat)}
-						className={`rounded-full px-4 py-1.5 text-[13px] whitespace-nowrap transition-colors ${
+						className={`rounded-full px-4 py-1.5 text-[12px] whitespace-nowrap transition-colors ${
 							activeFilter === cat
 								? "bg-blue-500 font-bold text-white"
-								: "bg-zinc-100 font-normal text-zinc-700"
+								: "bg-blue-50 font-normal text-zinc-500"
 						}`}
 					>
 						{cat}
@@ -159,10 +142,10 @@ export default function SpotsPage() {
 				))}
 			</div>
 
-			<div className="h-px bg-zinc-100" />
+			<div className="h-px bg-zinc-200" />
 
 			{/* Result count */}
-			<p className="px-4 py-2.5 text-sm font-medium text-zinc-500">
+			<p className="bg-blue-50 px-4 py-2.5 text-[13px] text-zinc-500">
 				{filteredSpots.length}件のスポット
 			</p>
 
@@ -170,31 +153,31 @@ export default function SpotsPage() {
 			<div className="flex-1 overflow-y-auto pb-20">
 				{filteredSpots.map((spot) => (
 					<Link key={spot.id} href={`/spots/${spot.id}`}>
-						<div className="mx-4 mb-2 flex items-center gap-3 rounded-2xl bg-white p-3 shadow-sm ring-1 ring-zinc-100">
-							<div className="h-14 w-14 flex-shrink-0 rounded-xl bg-zinc-200" />
+						<div className="mx-4 mb-2 flex items-center gap-3 rounded-xl bg-white p-3 shadow-sm">
+							<div className="h-14 w-14 flex-shrink-0 rounded-lg bg-zinc-200" />
 							<div className="min-w-0 flex-1">
-								<p className="text-base font-bold text-zinc-900">
+								<p className="text-[15px] font-bold text-zinc-900">
 									{spot.name}
 								</p>
-								<p className="mt-0.5 text-[13px] text-zinc-500">
+								<p className="mt-0.5 text-[11px] text-zinc-500">
 									{spot.category} · {spot.area}
 								</p>
-								<p className="mt-0.5 text-[13px] font-bold text-blue-600">
+								<p className="mt-0.5 text-[12px] font-bold text-blue-600">
 									★ {spot.rating}
 								</p>
 							</div>
 							<div className="flex flex-col items-end gap-2">
-								<span className="rounded-full bg-zinc-100 px-2.5 py-1 text-[13px] font-medium text-zinc-600">
+								<span className="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] text-zinc-500">
 									{spot.distance}
 								</span>
 								<div className="flex items-center gap-2">
 									{spot.isVisited && (
-										<span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-600">
+										<span className="rounded-full bg-blue-50 px-2 py-0.5 text-[9px] font-bold text-blue-600">
 											訪問済み
 										</span>
 									)}
 									<button
-										className={`text-base ${spot.isFavorite ? "text-blue-500" : "text-zinc-300"}`}
+										className={`text-[14px] ${spot.isFavorite ? "text-blue-500" : "text-zinc-300"}`}
 									>
 										{spot.isFavorite ? "♥" : "♡"}
 									</button>

@@ -1,5 +1,6 @@
 "use client";
 
+import { Header } from "@/components/layout/header";
 import Navigation from "@/components/layout/navigation";
 import Link from "next/link";
 import { useState } from "react";
@@ -72,58 +73,57 @@ export default function FavoritesPage() {
 	});
 
 	return (
-		<div className="mx-auto flex h-screen max-w-[390px] flex-col bg-white">
-			{/* Header */}
-			<div className="bg-white px-4 pt-11 pb-0">
-				<div className="flex items-center gap-3">
-					<h1 className="text-2xl font-bold text-zinc-900">
-						お気に入り
-					</h1>
-					<span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-sm font-bold text-blue-600">
-						{mockFavorites.length}件
-					</span>
-				</div>
-			</div>
+		<div className="mx-auto flex h-screen max-w-[390px] flex-col bg-blue-50">
+			<Header variant="page" title="お気に入り" />
 
 			{/* Tabs */}
-			<div className="mt-3 flex border-b border-zinc-100">
+			<div className="relative flex bg-white">
 				{tabs.map((tab) => (
 					<button
 						key={tab}
 						onClick={() => setActiveTab(tab)}
-						className={`flex-1 py-3 text-sm font-medium transition-colors ${
+						className={`flex-1 py-3 text-[14px] transition-colors ${
 							activeTab === tab
-								? "border-b-2 border-blue-600 text-blue-600"
-								: "text-zinc-400"
+								? "font-bold text-blue-600"
+								: "font-normal text-zinc-400"
 						}`}
 					>
 						{tab}
 					</button>
 				))}
+				{/* Active indicator bar */}
+				<div
+					className="absolute bottom-0 h-[3px] rounded-sm bg-blue-500 transition-all"
+					style={{
+						width: `${100 / tabs.length}%`,
+						left: `${(tabs.indexOf(activeTab) * 100) / tabs.length}%`,
+					}}
+				/>
 			</div>
+			<div className="h-px bg-zinc-200" />
 
 			{/* Favorites list */}
 			<div className="flex-1 overflow-y-auto pb-20">
 				<div className="mt-2 space-y-2 px-4">
 					{filteredFavorites.map((spot) => (
 						<Link key={spot.id} href={`/spots/${spot.id}`}>
-							<div className="flex items-stretch overflow-hidden rounded-2xl shadow-sm ring-1 ring-zinc-100">
-								{/* Thumbnail with color accent */}
+							<div className="flex items-stretch overflow-hidden rounded-xl bg-white shadow-sm">
+								{/* Thumbnail */}
 								<div className="relative flex-shrink-0">
-									<div className="h-full w-20 bg-zinc-200" />
-									<div className="absolute top-0 right-0 h-full w-3 bg-zinc-100" />
+									<div className="h-full w-[76px] bg-zinc-200" />
+									<div className="absolute top-0 right-0 h-full w-3 bg-white" />
 								</div>
 
 								{/* Content */}
 								<div className="flex flex-1 items-start justify-between px-3 py-3">
 									<div className="min-w-0 flex-1">
-										<p className="text-base font-bold text-zinc-900">
+										<p className="text-[15px] font-bold text-zinc-900">
 											{spot.name}
 										</p>
-										<p className="mt-0.5 text-[13px] text-zinc-500">
+										<p className="mt-0.5 text-[11px] text-zinc-500">
 											{spot.category} · {spot.area}
 										</p>
-										<p className="mt-0.5 text-[13px] font-bold text-blue-600">
+										<p className="mt-0.5 text-[12px] font-bold text-blue-600">
 											★ {spot.rating}
 										</p>
 										{spot.memo !== undefined && (
@@ -134,11 +134,11 @@ export default function FavoritesPage() {
 									</div>
 									<div className="ml-2 flex flex-col items-end gap-1.5">
 										{spot.isVisited && (
-											<span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-600">
+											<span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-600">
 												✓ 訪問済み
 											</span>
 										)}
-										<button className="mt-1 text-lg text-blue-500">
+										<button className="mt-1 text-[18px] text-blue-500">
 											♥
 										</button>
 									</div>
