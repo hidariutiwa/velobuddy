@@ -51,6 +51,7 @@ Google Maps を使って、自転車で行けるスポットを検索・お気�
 - **色:** Tailwind CSS のカラーパレットのみ使用（例: `text-zinc-600`, `bg-white`）。任意の hex 値・RGB 値・CSS カスタムプロパティによる色の直接指定は禁止。
 - **フォント:** `Noto Sans JP` のみ使用（`layout.tsx` で適用済み）。他のフォントは原則禁止。どうしても使いたい場合は、**使う場所・意図を説明し、承認を得てから**使うこと。
 - **デザイン管理:** UI デザインは Figma で別途管理する。実装時は Figma のデザインを参照し、デザインに沿って実装すること。
+    - figma_url: https://www.figma.com/design/E1wziHtaAI4k9HzKwmsm38/velobuddy?node-id=0-1&t=Lw7CECQvRixFC09I-1
 
 ### 2.5. コマンド一覧 (Commands)
 
