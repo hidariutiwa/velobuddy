@@ -1,2 +1,1 @@
-release: npx prisma migrate deploy
-web: npm run start
+web: npx prisma migrate deploy && npx prisma generate && npm run start
