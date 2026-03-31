@@ -1,5 +1,6 @@
 "use client";
 
+import { Header } from "@/components/layout/header";
 import Navigation from "@/components/layout/navigation";
 import GoogleMap from "@/components/map/GoogleMap";
 import { useState } from "react";
@@ -25,11 +26,13 @@ export default function Home() {
 				]}
 			/>
 
-			{/* Status bar spacer */}
-			<div className="absolute top-0 right-0 left-0 h-11" />
+			{/* Header */}
+			<div className="absolute top-0 right-0 left-0 z-10">
+				<Header />
+			</div>
 
 			{/* Search bar + GPS button */}
-			<div className="absolute top-14 right-0 left-0 flex items-center gap-2 px-4">
+			<div className="absolute top-24 right-0 left-0 flex items-center gap-2 px-4">
 				<div className="flex flex-1 items-center gap-2 rounded-full bg-white px-4 py-3 shadow-md">
 					<div className="h-5 w-5 flex-shrink-0 rounded-full bg-zinc-200" />
 					<span className="text-sm text-zinc-400">
@@ -60,7 +63,7 @@ export default function Home() {
 			</div>
 
 			{/* Category chips */}
-			<div className="absolute top-[116px] right-0 left-0 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none]">
+			<div className="absolute top-[172px] right-0 left-0 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none]">
 				{categories.map((cat) => (
 					<button
 						key={cat}

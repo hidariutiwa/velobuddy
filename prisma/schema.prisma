@@ -17,6 +17,7 @@ model Prefectures {
 
 model User {
     id                 Int                 @id @default(autoincrement())
+    googleId           String?             @unique
     nickname           String
     email              String              @unique
     birthday           DateTime?
