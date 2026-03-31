@@ -1,4 +1,5 @@
 import "./globals.css";
+import { SessionProvider } from "@/components/providers/SessionProvider";
 import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 
@@ -17,7 +18,9 @@ export default function RootLayout({
 	return (
 		<html lang="ja">
 			<body className={`${notoSansJp.className} antialiased`}>
-				<div className="h-screen w-screen">{children}</div>
+				<SessionProvider>
+					<div className="h-screen w-screen">{children}</div>
+				</SessionProvider>
 			</body>
 		</html>
 	);
