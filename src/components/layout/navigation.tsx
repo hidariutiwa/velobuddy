@@ -56,7 +56,7 @@ export default function Navigation() {
 	});
 
 	return (
-		<nav className="flex h-fit w-full items-center justify-between border-t border-zinc-200">
+		<nav className="flex h-fit w-full items-center justify-between border-t border-zinc-200 pb-6">
 			<div className="flex h-fit w-full items-center justify-between">
 				{items}
 			</div>
