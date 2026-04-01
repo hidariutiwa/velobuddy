@@ -12,6 +12,24 @@
 			}
 		]
 	},
+	"permissions": {
+		"allow": [
+			"Read(/*)",
+			"Edit(/src/*)",
+			"Edit(*.env.example)",
+			"Bash(ls *)",
+			"Bash(cat *)",
+			"Bash(tail *)",
+			"Bash(echo *)",
+			"Bash(grep *)",
+			"Bash(find *)",
+			"Bash(npm run *)",
+			"Bash(gh *)",
+			"Bash(git *)",
+			"Bash(python *)"
+		],
+		"defaultMode": "auto"
+	},
 	"enabledPlugins": {
 		"frontend-design@claude-plugins-official": true,
 		"code-review@claude-plugins-official": true,
