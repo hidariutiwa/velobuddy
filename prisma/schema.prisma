@@ -48,12 +48,12 @@ model PlaceCategory {
 
 model Place {
     id                 Int                 @id @default(autoincrement())
+    googlePlaceId      String              @unique
     name               String
-    latitude           Decimal?
-    longitude          Decimal?
-    description        String?
-    businessHoursFrom  DateTime?
-    businessHoursTo    DateTime?
+    latitude           Float?
+    longitude          Float?
+    address            String?
+    imageUrl           String?
     createdAt          DateTime            @default(now())
     updatedAt          DateTime            @updatedAt
     categories         PlaceCategory[]
