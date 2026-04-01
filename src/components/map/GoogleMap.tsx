@@ -1,6 +1,12 @@
 "use client";
 
-import { AdvancedMarker, APIProvider, Map } from "@vis.gl/react-google-maps";
+import {
+	AdvancedMarker,
+	APIProvider,
+	Map,
+	useMap,
+} from "@vis.gl/react-google-maps";
+import { useEffect, useRef } from "react";
 
 interface MarkerItem {
 	id: string;
@@ -19,6 +25,26 @@ interface GoogleMapProps {
 const DEFAULT_CENTER = { lat: 35.6714, lng: 139.6956 };
 const DEFAULT_ZOOM = 14;
 
+function MapCameraController({
+	center,
+}: {
+	center: { lat: number; lng: number };
+}) {
+	const map = useMap();
+	const prevCenterRef = useRef(center);
+	useEffect(() => {
+		if (
+			map &&
+			(prevCenterRef.current.lat !== center.lat ||
+				prevCenterRef.current.lng !== center.lng)
+		) {
+			map.panTo(center);
+			prevCenterRef.current = center;
+		}
+	}, [map, center]);
+	return null;
+}
+
 export default function GoogleMap({
 	className = "",
 	center = DEFAULT_CENTER,
@@ -36,6 +62,7 @@ export default function GoogleMap({
 					disableDefaultUI={true}
 					style={{ width: "100%", height: "100%" }}
 				>
+					<MapCameraController center={center} />
 					{markers.map((marker) => (
 						<AdvancedMarker
 							key={marker.id}
