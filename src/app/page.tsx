@@ -3,13 +3,48 @@ import MainContainer from "@/components/layout/mainContainer";
 import GoogleMap from "@/components/map/GoogleMap";
 import { PlaceBar } from "@/components/utils/place";
 import { mockPlaces } from "@/types/map";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const categories = ["すべて", "カフェ", "公園", "食事", "観光"] as const;
 type Category = (typeof categories)[number];
 
 export default function Home() {
 	const [activeCategory, setActiveCategory] = useState<Category>("すべて");
+	const [userLocation, setUserLocation] = useState<{
+		lat: number;
+		lng: number;
+	} | null>(null);
+	const [isLocating, setIsLocating] = useState(false);
+
+	const locateUser = () => {
+		if (typeof navigator === "undefined" || !navigator.geolocation) return;
+		setIsLocating(true);
+		navigator.geolocation.getCurrentPosition(
+			(pos) => {
+				setUserLocation({
+					lat: pos.coords.latitude,
+					lng: pos.coords.longitude,
+				});
+				setIsLocating(false);
+			},
+			() => {
+				setIsLocating(false);
+			},
+		);
+	};
+
+	useEffect(() => {
+		if (typeof navigator === "undefined" || !navigator.geolocation) return;
+		navigator.geolocation.getCurrentPosition(
+			(pos) => {
+				setUserLocation({
+					lat: pos.coords.latitude,
+					lng: pos.coords.longitude,
+				});
+			},
+			() => {},
+		);
+	}, []);
 
 	return (
 		<MainContainer>
@@ -17,14 +52,26 @@ export default function Home() {
 				{/* Map background (full screen) */}
 				<GoogleMap
 					className="h-full w-full"
-					markers={[
-						{
-							id: "yoyogi",
-							lat: 35.6714,
-							lng: 139.6956,
-							label: "代々木公園",
-						},
-					]}
+					center={userLocation ?? undefined}
+					markers={
+						userLocation
+							? [
+									{
+										id: "current-location",
+										lat: userLocation.lat,
+										lng: userLocation.lng,
+										label: "現在地",
+									},
+								]
+							: [
+									{
+										id: "yoyogi",
+										lat: 35.6714,
+										lng: 139.6956,
+										label: "代々木公園",
+									},
+								]
+					}
 				/>
 
 				{/* Search bar + GPS button */}
@@ -35,7 +82,10 @@ export default function Home() {
 							スポットを検索...
 						</span>
 					</div>
-					<button className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-white text-blue-500 shadow-md">
+					<button
+						onClick={locateUser}
+						className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-white shadow-md ${isLocating ? "text-zinc-400" : "text-blue-500"}`}
+					>
 						<svg
 							width="20"
 							height="20"
