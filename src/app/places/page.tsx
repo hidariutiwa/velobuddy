@@ -14,8 +14,9 @@ export default function Page() {
 			const res = await fetch(
 				`/api/places/search?q=${encodeURIComponent(query)}`,
 			);
+			if (!res.ok) return;
 			const data: PlaceSearchResponse = await res.json();
-			setPlaces(data.places);
+			setPlaces(data.places ?? []);
 		} catch (err) {
 			console.error(err);
 		}
