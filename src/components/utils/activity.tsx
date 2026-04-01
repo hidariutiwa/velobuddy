@@ -1,3 +1,4 @@
+import { ActivityRouteMap } from "@/components/map/ActivityRouteMap";
 import { Activity } from "@/lib/generated/prisma/client";
 
 function createDisplayTime(seconds: number): string {
@@ -32,10 +33,7 @@ export function ActivitySheet({ activity }: { activity: Activity }) {
 	return (
 		<div className="flex h-fit w-full flex-col border-t border-b border-zinc-200 bg-white">
 			<ActivityInformation activity={activity} />
-			{/* ここに自転車で走ったルートが載ってるGoogle　Mapを出したい */}
-			<div className="flex h-40 w-full items-center justify-center bg-zinc-400">
-				<p className="text-2xl text-zinc-200">Map表示エリア</p>
-			</div>
+			<ActivityRouteMap polyline={activity.polyline} />
 		</div>
 	);
 }
