@@ -9,22 +9,21 @@ function createDisplayTime(seconds: number): string {
 		.toString()
 		.padStart(2, "0");
 
-	const displayTime =
-		hours < 1
-			? `${displayMinutes}:${displaySeconds}`
-			: `${hours}:${displayMinutes}:${displaySeconds}`;
+	const displayTime = `${displayHours}:${displayMinutes}:${displaySeconds}`;
 
 	return displayTime;
 }
 
 function ActivityInformation({ activity }: { activity: Activity }) {
 	const displayTime = createDisplayTime(activity.drivingTime);
+
 	return (
 		<div className="flex h-24 w-full flex-col items-start justify-center gap-2 p-3">
 			<p className="font-bold">
-				<span className="text-xl">{activity.distance}</span> km
+				{activity.distance}
+				<span className="text-sm"> km</span>
 			</p>
-			<p className="text-xl">{displayTime}</p>
+			<p className="text-base">{displayTime}</p>
 		</div>
 	);
 }

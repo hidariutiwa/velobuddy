@@ -36,10 +36,10 @@ function NavigationItem({
 	return (
 		<Link
 			href={item.href}
-			className={`flex h-16 w-26 flex-col items-center justify-center px-2 py-1 ${isActive ? "text-blue-600" : ""}`}
+			className={`flex h-18 w-26 flex-col items-center justify-center rounded-xl px-1 pt-2 pb-4 ${isActive ? "bg-blue-50 text-blue-600" : ""}`}
 		>
 			<div
-				className={`flex h-full w-3/4 items-center justify-center rounded-md text-2xl ${isActive ? "bg-blue-100" : ""}`}
+				className={`flex h-full w-3/4 items-center justify-center rounded-md text-2xl`}
 			>
 				{item.icon}
 			</div>
@@ -56,7 +56,7 @@ export default function Navigation() {
 	});
 
 	return (
-		<nav className="flex h-fit w-full items-center justify-between border-t border-zinc-200 pb-6">
+		<nav className="flex h-fit w-full items-center justify-between border-t border-zinc-200 px-4 pt-2 pb-6 text-nowrap">
 			<div className="flex h-fit w-full items-center justify-between">
 				{items}
 			</div>
