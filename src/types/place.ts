@@ -30,3 +30,7 @@ export interface UpdateFavoriteRequest {
 	visited?: boolean;
 	memo?: string | null;
 }
+
+export interface PlaceSearchResponse {
+	places: PlaceCache[];
+}

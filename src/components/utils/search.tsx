@@ -1,6 +1,23 @@
+"use client";
+import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
-export function SearchBar() {
+interface SearchBarProps {
+	onSearch: (query: string) => void;
+}
+
+export function SearchBar({ onSearch }: SearchBarProps) {
+	const [query, setQuery] = useState("");
+
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === "Enter") {
+			const trimmed = query.trim();
+			if (trimmed !== "") {
+				onSearch(trimmed);
+			}
+		}
+	};
+
 	return (
 		<div className="relative h-fit w-full">
 			<div className="absolute inset-y-0 left-0 flex h-full w-8 items-center justify-center text-zinc-400">
@@ -8,6 +25,9 @@ export function SearchBar() {
 			</div>
 			<input
 				type="text"
+				value={query}
+				onChange={(e) => setQuery(e.target.value)}
+				onKeyDown={handleKeyDown}
 				className="h-fit w-full rounded-full border border-zinc-200 bg-white py-2 pr-3 pl-8 focus:outline-blue-600"
 				placeholder="探す"
 			/>
