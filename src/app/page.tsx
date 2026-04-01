@@ -54,8 +54,9 @@ export default function Home() {
 			const res = await fetch(
 				`/api/places/search?q=${encodeURIComponent(query)}`,
 			);
+			if (!res.ok) return;
 			const data: PlaceSearchResponse = await res.json();
-			setSearchResults(data.places);
+			setSearchResults(data.places ?? []);
 		} catch (err) {
 			console.error(err);
 		}
