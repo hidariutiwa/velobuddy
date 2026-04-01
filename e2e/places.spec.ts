@@ -276,3 +276,120 @@ test.describe("探す画面 (/places)", () => {
 		});
 	});
 });
+
+test.describe("favorite toggle", () => {
+	const searchResults = {
+		places: [
+			{
+				id: 1,
+				googlePlaceId: "place123",
+				name: "代々木公園",
+				latitude: 35.6714,
+				longitude: 139.6956,
+				address: "東京都渋谷区",
+				imageUrl: null,
+			},
+		],
+	};
+
+	test.beforeEach(async ({ page }) => {
+		await page.route("**/api/auth/session", (route) =>
+			route.fulfill({
+				status: 200,
+				contentType: "application/json",
+				body: JSON.stringify({
+					user: { id: 1, name: "テストユーザー", email: "test@example.com" },
+					expires: "2099-01-01",
+				}),
+			})
+		);
+		await page.route("**/api/places/search**", (route) =>
+			route.fulfill({
+				status: 200,
+				contentType: "application/json",
+				body: JSON.stringify(searchResults),
+			})
+		);
+	});
+
+	test("ハートボタンクリックでPOST /api/favoritesが呼ばれる", async ({ page }) => {
+		await page.route("**/api/favorites", async (route) => {
+			if (route.request().method() === "GET") {
+				await route.fulfill({
+					status: 200,
+					contentType: "application/json",
+					body: JSON.stringify([]),
+				});
+			} else {
+				await route.fulfill({
+					status: 201,
+					contentType: "application/json",
+					body: JSON.stringify({
+						id: 99,
+						place: searchResults.places[0],
+						visited: false,
+						memo: null,
+						createdAt: new Date().toISOString(),
+						updatedAt: new Date().toISOString(),
+					}),
+				});
+			}
+		});
+
+		await page.goto("/places");
+		await page.fill('input[placeholder="探す"]', "公園");
+		await page.press('input[placeholder="探す"]', "Enter");
+		await page.waitForSelector('[aria-label="お気に入り追加"]');
+
+		const [request] = await Promise.all([
+			page.waitForRequest((req) =>
+				req.url().includes("/api/favorites") && req.method() === "POST"
+			),
+			page.click('[aria-label="お気に入り追加"]'),
+		]);
+
+		const body = JSON.parse(request.postData() ?? "{}");
+		expect(body.googlePlaceId).toBe("place123");
+		expect(body.name).toBe("代々木公園");
+	});
+
+	test("登録済みスポットのハートボタンクリックでDELETE /api/favorites/:idが呼ばれる", async ({
+		page,
+	}) => {
+		await page.route("**/api/favorites", async (route) => {
+			if (route.request().method() === "GET") {
+				await route.fulfill({
+					status: 200,
+					contentType: "application/json",
+					body: JSON.stringify([
+						{
+							id: 5,
+							place: searchResults.places[0],
+							visited: false,
+							memo: null,
+							createdAt: new Date().toISOString(),
+							updatedAt: new Date().toISOString(),
+						},
+					]),
+				});
+			}
+		});
+		await page.route("**/api/favorites/5", async (route) => {
+			await route.fulfill({ status: 200, body: "" });
+		});
+
+		await page.goto("/places");
+		await page.fill('input[placeholder="探す"]', "公園");
+		await page.press('input[placeholder="探す"]', "Enter");
+		await page.waitForSelector('[aria-label="お気に入り解除"]');
+
+		const [request] = await Promise.all([
+			page.waitForRequest((req) =>
+				req.url().includes("/api/favorites/5") && req.method() === "DELETE"
+			),
+			page.click('[aria-label="お気に入り解除"]'),
+		]);
+
+		expect(request.method()).toBe("DELETE");
+	});
+});
