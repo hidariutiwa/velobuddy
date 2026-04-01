@@ -7,8 +7,7 @@
 # 実行内容:
 #   1. git worktree を3つ削除
 #   2. feature/*-{backend,frontend,test} ブランチを削除
-#   3. tmux セッションを終了（ユーザー確認後）
-#   4. /tmp/velobuddy-<SESSION_ID>/ を保持（ログ確認用）
+#   3. /tmp/velobuddy-<SESSION_ID>/ を保持（ログ確認用）
 
 set -euo pipefail
 
@@ -53,21 +52,7 @@ done
 git -C "${REPO_PATH}" worktree prune
 log "Git worktrees cleaned up."
 
-# 3. tmux セッションを終了するか確認
-if [ -n "${TMUX_SESSION:-}" ] && command -v tmux &>/dev/null; then
-  if tmux has-session -t "${TMUX_SESSION}" 2>/dev/null; then
-    read -r -p "tmuxセッション '${TMUX_SESSION}' を終了しますか？ [y/N]: " answer
-    if [[ "${answer}" =~ ^[Yy]$ ]]; then
-      tmux kill-session -t "${TMUX_SESSION}"
-      log "tmux session '${TMUX_SESSION}' terminated."
-    else
-      log "tmux session '${TMUX_SESSION}' kept running."
-      echo "終了するには: tmux kill-session -t ${TMUX_SESSION}"
-    fi
-  fi
-fi
-
-# 4. ログの保持を通知
+# 3. ログの保持を通知
 log "Logs preserved at: ${LOG_DIR}"
 echo ""
 echo "=== Teardown complete ==="
