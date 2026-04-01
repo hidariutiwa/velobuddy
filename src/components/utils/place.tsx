@@ -26,7 +26,7 @@ export function PlaceBar({ place }: { place: Place }) {
 				<div className="flex flex-col gap-0.5 text-sm text-zinc-500">
 					<Link
 						href={`/spots/${place.id}`}
-						className="text-xl font-bold text-zinc-700"
+						className="text-base font-bold text-zinc-700"
 					>
 						{place.name}
 					</Link>
@@ -52,7 +52,7 @@ export function PlaceCard({ place }: { place: Place }) {
 				<div className="flex flex-col gap-0.5 text-sm text-zinc-500">
 					<Link
 						href={`/places/${place.id}`}
-						className="text-xl font-bold text-zinc-700"
+						className="text-base font-bold text-zinc-700"
 					>
 						{place.name}
 					</Link>
