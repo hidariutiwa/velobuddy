@@ -2,7 +2,9 @@
 import MainContainer from "@/components/layout/mainContainer";
 import GoogleMap from "@/components/map/GoogleMap";
 import { PlaceBar } from "@/components/utils/place";
+import { SearchBar } from "@/components/utils/search";
 import { mockPlaces } from "@/types/map";
+import { PlaceCache, PlaceSearchResponse } from "@/types/place";
 import { useEffect, useState } from "react";
 
 const categories = ["すべて", "カフェ", "公園", "食事", "観光"] as const;
@@ -15,6 +17,7 @@ export default function Home() {
 		lng: number;
 	} | null>(null);
 	const [isLocating, setIsLocating] = useState(false);
+	const [searchResults, setSearchResults] = useState<PlaceCache[]>([]);
 
 	const locateUser = () => {
 		if (typeof navigator === "undefined" || !navigator.geolocation) return;
@@ -46,6 +49,56 @@ export default function Home() {
 		);
 	}, []);
 
+	const handleSearch = async (query: string) => {
+		try {
+			const res = await fetch(
+				`/api/places/search?q=${encodeURIComponent(query)}`,
+			);
+			const data: PlaceSearchResponse = await res.json();
+			setSearchResults(data.places);
+		} catch (err) {
+			console.error(err);
+		}
+	};
+
+	const searchMarkers =
+		searchResults.length > 0
+			? searchResults
+					.filter(
+						(
+							place,
+						): place is PlaceCache & {
+							latitude: number;
+							longitude: number;
+						} =>
+							place.latitude !== null && place.longitude !== null,
+					)
+					.map((place) => ({
+						id: place.googlePlaceId,
+						lat: place.latitude,
+						lng: place.longitude,
+						label: place.name,
+					}))
+			: null;
+
+	const defaultMarkers = userLocation
+		? [
+				{
+					id: "current-location",
+					lat: userLocation.lat,
+					lng: userLocation.lng,
+					label: "現在地",
+				},
+			]
+		: [
+				{
+					id: "yoyogi",
+					lat: 35.6714,
+					lng: 139.6956,
+					label: "代々木公園",
+				},
+			];
+
 	return (
 		<MainContainer>
 			<div className="flex h-full w-full flex-col items-center justify-start overflow-hidden">
@@ -53,34 +106,13 @@ export default function Home() {
 				<GoogleMap
 					className="h-full w-full"
 					center={userLocation ?? undefined}
-					markers={
-						userLocation
-							? [
-									{
-										id: "current-location",
-										lat: userLocation.lat,
-										lng: userLocation.lng,
-										label: "現在地",
-									},
-								]
-							: [
-									{
-										id: "yoyogi",
-										lat: 35.6714,
-										lng: 139.6956,
-										label: "代々木公園",
-									},
-								]
-					}
+					markers={searchMarkers ?? defaultMarkers}
 				/>
 
 				{/* Search bar + GPS button */}
 				<div className="absolute top-24 right-0 left-0 flex items-center gap-2 px-4">
 					<div className="flex flex-1 items-center gap-2 rounded-full bg-white px-4 py-3 shadow-md">
-						<div className="h-5 w-5 flex-shrink-0 rounded-full bg-zinc-200" />
-						<span className="text-sm text-zinc-400">
-							スポットを検索...
-						</span>
+						<SearchBar onSearch={handleSearch} />
 					</div>
 					<button
 						onClick={locateUser}
