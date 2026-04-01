@@ -12,22 +12,17 @@ import {
 	UpdateFavoriteRequest,
 } from "@/types/place";
 
-// Mock PrismaClient before importing the module under test
-const mockPrismaUserFavoritePlace = {
-	create: jest.fn(),
-	findMany: jest.fn(),
-	update: jest.fn(),
-	deleteMany: jest.fn(),
-};
-
-const mockPrismaPlace = {
-	upsert: jest.fn(),
-};
-
 jest.mock("@/lib/generated/prisma/client", () => ({
 	PrismaClient: jest.fn().mockImplementation(() => ({
-		place: mockPrismaPlace,
-		userFavoritePlace: mockPrismaUserFavoritePlace,
+		place: {
+			upsert: jest.fn(),
+		},
+		userFavoritePlace: {
+			create: jest.fn(),
+			findMany: jest.fn(),
+			update: jest.fn(),
+			deleteMany: jest.fn(),
+		},
 	})),
 }));
 
@@ -36,6 +31,24 @@ jest.mock("@prisma/adapter-pg", () => ({
 }));
 
 jest.mock("dotenv/config", () => ({}));
+
+// Get the prisma instance that place.ts created at module load time
+const MockedPrismaClient: jest.Mock = jest.requireMock(
+	"@/lib/generated/prisma/client",
+).PrismaClient;
+
+const prismaInstance = MockedPrismaClient.mock.results[0]?.value as {
+	place: { upsert: jest.Mock };
+	userFavoritePlace: {
+		create: jest.Mock;
+		findMany: jest.Mock;
+		update: jest.Mock;
+		deleteMany: jest.Mock;
+	};
+};
+
+const mockPrismaPlace = prismaInstance.place;
+const mockPrismaUserFavoritePlace = prismaInstance.userFavoritePlace;
 
 const mockPlace: PlaceCache = {
 	id: 1,
