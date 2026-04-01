@@ -6,7 +6,6 @@ description: >
     ユーザーが「○○機能を追加して」「○○を実装して」「APIとUIを作って」「新しい画面を作って」
     「○○ページを追加して」と言った場合に必ずこのスキルを使用する。
     バックエンドAPIとフロントエンドUIの両方が必要な機能開発に適用する。
-    tmuxによるリアルタイム進捗可視化付き。
 tools: Bash, Read, Glob, Grep, Task
 ---
 
@@ -18,7 +17,7 @@ tools: Bash, Read, Glob, Grep, Task
 ## 全体フロー
 
 ```
-フェーズ0:   セットアップ（tmux + worktree）
+フェーズ0:   セットアップ（worktree）
 フェーズ0.5: 契約設計（型定義・API仕様）← 並列の前提条件
 フェーズ1:   チーム結成・タスク分解
 フェーズ2:   並列開発（Backend / Frontend / Test 同時起動）
@@ -44,17 +43,7 @@ echo "FEATURE_SLUG=${FEATURE_SLUG}" >> "${LOG_DIR}/session.env"
 echo "LOG_DIR=${LOG_DIR}" >> "${LOG_DIR}/session.env"
 ```
 
-### 2. tmuxセッション起動
-
-```bash
-bash /home/vscode/.claude/skills/parallel-dev-team/scripts/setup_tmux.sh \
-  "${SESSION_ID}" "${FEATURE_SLUG}"
-```
-
-tmuxが使えない場合: ログは `/tmp/velobuddy-<SESSION_ID>/` に書き込まれ続ける。
-ユーザーに `tail -f /tmp/velobuddy-<SESSION_ID>/<agent>.log` で確認できることを伝える。
-
-### 3. git worktree作成
+### 2. git worktree作成
 
 ```bash
 bash /home/vscode/.claude/skills/parallel-dev-team/scripts/setup_worktrees.sh \
@@ -195,8 +184,6 @@ teardown.sh は以下を実行:
 
 1. 3つのworktreeを削除
 2. feature/\*-{backend,frontend,test} ブランチを削除
-3. ユーザーに「tmuxセッションを終了しますか？」と確認
-4. 確認後、`tmux kill-session -t "vb-${FEATURE_SLUG}"`
 
 ---
 

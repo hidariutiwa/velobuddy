@@ -1,18 +1,17 @@
 # ステータスログ形式仕様
 
 各エージェントは `/tmp/velobuddy-<SESSION_ID>/<agent>.log` にステータスを書き込む。
-tmuxペインはこのファイルを `tail -f` でリアルタイム表示する。
 
 ## ログファイル一覧
 
-| ファイル           | 書き込むエージェント | tmuxペイン     |
-| ------------------ | -------------------- | -------------- |
-| `contract.log`     | contract-designer    | Pane 0（左列） |
-| `orchestrator.log` | orchestrator         | Pane 1         |
-| `backend.log`      | backend-dev          | Pane 2         |
-| `frontend.log`     | frontend-dev         | Pane 3         |
-| `test.log`         | test-engineer        | Pane 4         |
-| `techlead.log`     | tech-lead            | Pane 5         |
+| ファイル           | 書き込むエージェント |
+| ------------------ | -------------------- |
+| `contract.log`     | contract-designer    |
+| `orchestrator.log` | orchestrator         |
+| `backend.log`      | backend-dev          |
+| `frontend.log`     | frontend-dev         |
+| `test.log`         | test-engineer        |
+| `techlead.log`     | tech-lead            |
 
 ## ログ行フォーマット
 
