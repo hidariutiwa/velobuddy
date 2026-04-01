@@ -23,9 +23,12 @@ export default function ProfilePage() {
 						{userName}
 					</p>
 					<p className="text-sm text-zinc-500">週末サイクリスト 🚴</p>
-					<button className="flex h-9 w-[140px] items-center justify-center rounded-full border-[1.5px] border-blue-600 text-xs text-blue-600">
+					<Link
+						href="/profile/edit"
+						className="flex h-9 w-[140px] items-center justify-center rounded-full border-[1.5px] border-blue-600 text-xs text-blue-600"
+					>
 						プロフィールを編集
-					</button>
+					</Link>
 				</div>
 
 				{/* Stats Row */}
