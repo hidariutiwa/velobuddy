@@ -9,7 +9,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 interface RouteParams {
-	params: { id: string };
+	params: Promise<{ id: string }>;
 }
 
 export async function PATCH(
@@ -27,7 +27,8 @@ export async function PATCH(
 		return NextResponse.json({ error: "Invalid user" }, { status: 401 });
 	}
 
-	const id = parseInt(params.id, 10);
+	const { id: idStr } = await params;
+	const id = parseInt(idStr, 10);
 	if (isNaN(id)) {
 		return NextResponse.json({ error: "Invalid id" }, { status: 400 });
 	}
@@ -113,7 +114,8 @@ export async function DELETE(
 		return NextResponse.json({ error: "Invalid user" }, { status: 401 });
 	}
 
-	const id = parseInt(params.id, 10);
+	const { id: idStr } = await params;
+	const id = parseInt(idStr, 10);
 	if (isNaN(id)) {
 		return NextResponse.json({ error: "Invalid id" }, { status: 400 });
 	}
