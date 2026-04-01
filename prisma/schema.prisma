@@ -81,6 +81,7 @@ model Activity {
     elevation       Float
     burnCalories    Float
     drivingTime     Int
+    polyline        String?
     createdAt       DateTime  @default(now())
     updatedAt       DateTime  @updatedAt
 }
