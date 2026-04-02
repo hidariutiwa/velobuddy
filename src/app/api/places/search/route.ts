@@ -18,7 +18,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					"X-Goog-Api-Key": process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY ?? "",
+					"X-Goog-Api-Key":
+						process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY ?? "",
 					"X-Goog-FieldMask":
 						"places.id,places.displayName,places.formattedAddress,places.location,places.photos",
 				},
@@ -36,14 +37,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 		const data =
 			(await response.json()) as GooglePlacesTextSearchApiResponse;
 
-		const addRequests: AddFavoriteRequest[] = (data.places ?? []).map((result) => ({
-			googlePlaceId: result.id,
-			name: result.displayName.text,
-			latitude: result.location?.latitude ?? null,
-			longitude: result.location?.longitude ?? null,
-			address: result.formattedAddress ?? null,
-			imageUrl: result.photos?.[0]?.name ?? null,
-		}));
+		const addRequests: AddFavoriteRequest[] = (data.places ?? []).map(
+			(result) => ({
+				googlePlaceId: result.id,
+				name: result.displayName.text,
+				latitude: result.location?.latitude ?? null,
+				longitude: result.location?.longitude ?? null,
+				address: result.formattedAddress ?? null,
+				imageUrl: result.photos?.[0]?.name ?? null,
+			}),
+		);
 
 		const places: PlaceCache[] = await Promise.all(
 			addRequests.map((req) => upsertPlace(req)),
