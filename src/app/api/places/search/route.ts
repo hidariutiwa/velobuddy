@@ -1,4 +1,5 @@
 import { upsertPlace } from "@/lib/db/place";
+import { mapGoogleTypesToCategory } from "@/lib/utils/placeCategory";
 import { GooglePlacesTextSearchApiResponse } from "@/types/googlePlaces";
 import { AddFavoriteRequest, PlaceCache } from "@/types/place";
 import { NextRequest, NextResponse } from "next/server";
@@ -21,7 +22,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 					"X-Goog-Api-Key":
 						process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY ?? "",
 					"X-Goog-FieldMask":
-						"places.id,places.displayName,places.formattedAddress,places.location,places.photos",
+						"places.id,places.displayName,places.formattedAddress,places.location,places.photos,places.priceLevel,places.regularOpeningHours,places.types",
 				},
 				body: JSON.stringify({ textQuery: q, languageCode: "ja" }),
 			},
@@ -45,6 +46,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 				longitude: result.location?.longitude ?? null,
 				address: result.formattedAddress ?? null,
 				imageUrl: result.photos?.[0]?.name ?? null,
+				priceLevel: result.priceLevel ?? null,
+				openingHours: result.regularOpeningHours
+					? JSON.stringify(result.regularOpeningHours)
+					: null,
+				categoryNames: result.types
+					? [mapGoogleTypesToCategory(result.types)]
+					: [],
 			}),
 		);
 

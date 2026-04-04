@@ -5,7 +5,7 @@ import {
 } from "@/lib/db/place";
 import { FavoritePlace } from "@/types/place";
 import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 jest.mock("next-auth", () => ({
 	getServerSession: jest.fn(),
@@ -46,6 +46,9 @@ const mockFavoritePlace: FavoritePlace = {
 		longitude: 139.6944,
 		address: "東京都渋谷区代々木神園町2-1",
 		imageUrl: null,
+		priceLevel: null,
+		openingHours: null,
+		categories: [],
 	},
 	visited: false,
 	memo: null,
@@ -74,7 +77,12 @@ describe("GET /api/favorites", () => {
 		mockGetFavoritesByUserId.mockResolvedValueOnce([mockFavoritePlace]);
 
 		const { GET } = await import("../route");
-		const response = await GET();
+		const request = new NextRequest(
+			new Request("http://localhost:3000/api/favorites", {
+				method: "GET",
+			}),
+		);
+		const response = await GET(request);
 
 		expect(response).toBeInstanceOf(NextResponse);
 		const body = (await response.json()) as FavoritePlace[];
@@ -82,14 +90,19 @@ describe("GET /api/favorites", () => {
 		expect(Array.isArray(body)).toBe(true);
 		expect(body).toHaveLength(1);
 		expect(body[0].id).toBe(10);
-		expect(mockGetFavoritesByUserId).toHaveBeenCalledWith(1);
+		expect(mockGetFavoritesByUserId).toHaveBeenCalledWith(1, undefined);
 	});
 
 	it("未認証の場合 401 を返す", async () => {
 		mockGetServerSession.mockResolvedValueOnce(null);
 
 		const { GET } = await import("../route");
-		const response = await GET();
+		const request = new NextRequest(
+			new Request("http://localhost:3000/api/favorites", {
+				method: "GET",
+			}),
+		);
+		const response = await GET(request);
 
 		expect(response.status).toBe(401);
 		const body = (await response.json()) as { error: string };
@@ -114,6 +127,9 @@ describe("POST /api/favorites", () => {
 			longitude: 139.6944,
 			address: "東京都渋谷区代々木神園町2-1",
 			imageUrl: null,
+			priceLevel: null,
+			openingHours: null,
+			categories: [],
 		});
 		mockCreateFavorite.mockResolvedValueOnce(mockFavoritePlace);
 

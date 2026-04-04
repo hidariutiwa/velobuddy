@@ -4,9 +4,22 @@ import {
 	getFavoritesByUserId,
 	upsertPlace,
 } from "@/lib/db/place";
-import { AddFavoriteRequest } from "@/types/place";
+import {
+	AddFavoriteRequest,
+	FilterOptions,
+	PlaceCategory,
+} from "@/types/place";
 import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+
+const VALID_CATEGORIES: PlaceCategory[] = [
+	"公園",
+	"温泉",
+	"銭湯",
+	"食事",
+	"カフェ",
+	"観光",
+];
 
 export async function POST(request: Request): Promise<NextResponse> {
 	const session = await getServerSession(authOptions);
@@ -57,6 +70,12 @@ export async function POST(request: Request): Promise<NextResponse> {
 		longitude: typeof raw.longitude === "number" ? raw.longitude : null,
 		address: typeof raw.address === "string" ? raw.address : null,
 		imageUrl: typeof raw.imageUrl === "string" ? raw.imageUrl : null,
+		priceLevel: typeof raw.priceLevel === "string" ? raw.priceLevel : null,
+		openingHours:
+			typeof raw.openingHours === "string" ? raw.openingHours : null,
+		categoryNames: Array.isArray(raw.categoryNames)
+			? (raw.categoryNames as string[])
+			: [],
 	};
 
 	try {
@@ -71,7 +90,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 	}
 }
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(request: NextRequest): Promise<NextResponse> {
 	const session = await getServerSession(authOptions);
 
 	if (session === null) {
@@ -83,8 +102,32 @@ export async function GET(): Promise<NextResponse> {
 		return NextResponse.json({ error: "Invalid user" }, { status: 401 });
 	}
 
+	const { searchParams } = new URL(request.url);
+	const filter: FilterOptions = {};
+
+	const visited = searchParams.get("visited");
+	if (visited !== null) {
+		filter.visited = visited === "true";
+	}
+
+	const category = searchParams.get("category");
+	if (
+		category !== null &&
+		VALID_CATEGORIES.includes(category as PlaceCategory)
+	) {
+		filter.category = category as PlaceCategory;
+	}
+
+	const priceLevel = searchParams.get("priceLevel");
+	if (priceLevel !== null) {
+		filter.priceLevel = priceLevel;
+	}
+
 	try {
-		const favorites = await getFavoritesByUserId(userId);
+		const favorites = await getFavoritesByUserId(
+			userId,
+			Object.keys(filter).length > 0 ? filter : undefined,
+		);
 		return NextResponse.json(favorites);
 	} catch {
 		return NextResponse.json(

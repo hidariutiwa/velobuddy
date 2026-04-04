@@ -58,6 +58,22 @@ const mockPlace: PlaceCache = {
 	longitude: 139.6944,
 	address: "東京都渋谷区代々木神園町2-1",
 	imageUrl: null,
+	priceLevel: null,
+	openingHours: null,
+	categories: [],
+};
+
+const mockDbPlace = {
+	id: 1,
+	googlePlaceId: "ChIJp4JiUCNP0xQR1JaSjpW_Hms",
+	name: "代々木公園",
+	latitude: 35.6715,
+	longitude: 139.6944,
+	address: "東京都渋谷区代々木神園町2-1",
+	imageUrl: null,
+	priceLevel: null,
+	openingHours: null,
+	categories: [],
 };
 
 const mockFavorite: FavoritePlace = {
@@ -84,15 +100,7 @@ beforeEach(() => {
 
 describe("upsertPlace", () => {
 	it("googlePlaceId で Place を upsert し PlaceCache を返す", async () => {
-		mockPrismaPlace.upsert.mockResolvedValueOnce({
-			id: 1,
-			googlePlaceId: addRequest.googlePlaceId,
-			name: addRequest.name,
-			latitude: addRequest.latitude,
-			longitude: addRequest.longitude,
-			address: addRequest.address,
-			imageUrl: addRequest.imageUrl,
-		});
+		mockPrismaPlace.upsert.mockResolvedValueOnce({ ...mockDbPlace });
 
 		const result = await upsertPlace(addRequest);
 
@@ -102,15 +110,7 @@ describe("upsertPlace", () => {
 	});
 
 	it("全フィールドが正しくPrismaに渡される", async () => {
-		mockPrismaPlace.upsert.mockResolvedValueOnce({
-			id: 1,
-			googlePlaceId: addRequest.googlePlaceId,
-			name: addRequest.name,
-			latitude: addRequest.latitude,
-			longitude: addRequest.longitude,
-			address: addRequest.address,
-			imageUrl: addRequest.imageUrl,
-		});
+		mockPrismaPlace.upsert.mockResolvedValueOnce({ ...mockDbPlace });
 
 		await upsertPlace(addRequest);
 
@@ -138,15 +138,7 @@ describe("createFavorite", () => {
 			memo: null,
 			createdAt: new Date("2026-04-01T00:00:00.000Z"),
 			updatedAt: new Date("2026-04-01T00:00:00.000Z"),
-			place: {
-				id: 1,
-				googlePlaceId: "ChIJp4JiUCNP0xQR1JaSjpW_Hms",
-				name: "代々木公園",
-				latitude: 35.6715,
-				longitude: 139.6944,
-				address: "東京都渋谷区代々木神園町2-1",
-				imageUrl: null,
-			},
+			place: { ...mockDbPlace },
 		});
 
 		const result = await createFavorite(1, 1);
@@ -166,15 +158,7 @@ describe("createFavorite", () => {
 			memo: null,
 			createdAt: new Date("2026-04-01T00:00:00.000Z"),
 			updatedAt: new Date("2026-04-01T00:00:00.000Z"),
-			place: {
-				id: 1,
-				googlePlaceId: "ChIJp4JiUCNP0xQR1JaSjpW_Hms",
-				name: "代々木公園",
-				latitude: 35.6715,
-				longitude: 139.6944,
-				address: "東京都渋谷区代々木神園町2-1",
-				imageUrl: null,
-			},
+			place: { ...mockDbPlace },
 		});
 
 		const result = await createFavorite(1, 1);
@@ -198,15 +182,7 @@ describe("getFavoritesByUserId", () => {
 				memo: null,
 				createdAt: new Date("2026-04-01T00:00:00.000Z"),
 				updatedAt: new Date("2026-04-01T00:00:00.000Z"),
-				place: {
-					id: 1,
-					googlePlaceId: "ChIJp4JiUCNP0xQR1JaSjpW_Hms",
-					name: "代々木公園",
-					latitude: 35.6715,
-					longitude: 139.6944,
-					address: "東京都渋谷区代々木神園町2-1",
-					imageUrl: null,
-				},
+				place: { ...mockDbPlace },
 			},
 		]);
 
@@ -251,15 +227,7 @@ describe("updateFavorite", () => {
 			memo: null,
 			createdAt: new Date("2026-04-01T00:00:00.000Z"),
 			updatedAt: new Date("2026-04-01T00:00:00.000Z"),
-			place: {
-				id: 1,
-				googlePlaceId: "ChIJp4JiUCNP0xQR1JaSjpW_Hms",
-				name: "代々木公園",
-				latitude: 35.6715,
-				longitude: 139.6944,
-				address: "東京都渋谷区代々木神園町2-1",
-				imageUrl: null,
-			},
+			place: { ...mockDbPlace },
 		});
 
 		const result = await updateFavorite(10, updateData);
@@ -278,15 +246,7 @@ describe("updateFavorite", () => {
 			memo: null,
 			createdAt: new Date("2026-04-01T00:00:00.000Z"),
 			updatedAt: new Date("2026-04-01T00:00:00.000Z"),
-			place: {
-				id: 1,
-				googlePlaceId: "ChIJp4JiUCNP0xQR1JaSjpW_Hms",
-				name: "代々木公園",
-				latitude: 35.6715,
-				longitude: 139.6944,
-				address: "東京都渋谷区代々木神園町2-1",
-				imageUrl: null,
-			},
+			place: { ...mockDbPlace },
 		});
 
 		const result = await updateFavorite(10, updateData);

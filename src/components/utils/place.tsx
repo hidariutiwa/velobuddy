@@ -3,6 +3,35 @@ import { PlaceCache } from "@/types/place";
 import Link from "next/link";
 import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 
+const PRICE_LABEL: Record<string, string> = {
+	PRICE_LEVEL_INEXPENSIVE: "¥",
+	PRICE_LEVEL_MODERATE: "¥¥",
+	PRICE_LEVEL_EXPENSIVE: "¥¥¥",
+	PRICE_LEVEL_VERY_EXPENSIVE: "¥¥¥¥",
+};
+
+function OpenNowBadge() {
+	return (
+		<span className="rounded bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold text-green-700">
+			営業中
+		</span>
+	);
+}
+
+function PlaceBadges({ place }: { place: MapPlace }) {
+	const priceLabel = place.priceLevel ? PRICE_LABEL[place.priceLevel] : null;
+	const openNow = place.openingHours?.openNow === true;
+
+	return (
+		<div className="flex items-center gap-1.5">
+			{priceLabel && (
+				<span className="text-xs text-zinc-500">{priceLabel}</span>
+			)}
+			{openNow && <OpenNowBadge />}
+		</div>
+	);
+}
+
 function PlaceNoImage() {
 	return (
 		<div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gray-400">
@@ -54,6 +83,7 @@ export function PlaceBar({
 					</Link>
 					<p>{place.category}</p>
 					<p>{place.address || ""}</p>
+					<PlaceBadges place={place} />
 				</div>
 			</div>
 			<div className="flex h-full items-start justify-center">
@@ -92,6 +122,7 @@ export function PlaceCard({
 					</Link>
 					<p>{place.category}</p>
 					<p>{place.address || ""}</p>
+					<PlaceBadges place={place} />
 				</div>
 			</div>
 			<div className="flex h-full items-start justify-center">

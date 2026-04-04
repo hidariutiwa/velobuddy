@@ -4,6 +4,7 @@ import { FavoritePlace } from "@/types/place";
 interface FavoriteListProps {
 	favorites: FavoritePlace[];
 	isLoading: boolean;
+	hasActiveFilters?: boolean;
 	onVisitedToggle: (id: number, visited: boolean) => void;
 	onMemoUpdate: (id: number, memo: string | null) => void;
 	onDelete: (id: number) => void;
@@ -28,6 +29,7 @@ function LoadingSkeleton() {
 export function FavoriteList({
 	favorites,
 	isLoading,
+	hasActiveFilters,
 	onVisitedToggle,
 	onMemoUpdate,
 	onDelete,
@@ -46,7 +48,9 @@ export function FavoriteList({
 		return (
 			<div className="flex w-full items-center justify-center py-16">
 				<p className="text-sm text-zinc-400">
-					お気に入りスポットはまだありません
+					{hasActiveFilters
+						? "条件に一致するスポットはありません"
+						: "お気に入りスポットはまだありません"}
 				</p>
 			</div>
 		);
