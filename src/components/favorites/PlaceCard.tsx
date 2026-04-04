@@ -3,6 +3,13 @@
 import { FavoritePlace } from "@/types/place";
 import { useState } from "react";
 
+const PRICE_LABEL: Record<string, string> = {
+	PRICE_LEVEL_INEXPENSIVE: "¥",
+	PRICE_LEVEL_MODERATE: "¥¥",
+	PRICE_LEVEL_EXPENSIVE: "¥¥¥",
+	PRICE_LEVEL_VERY_EXPENSIVE: "¥¥¥¥",
+};
+
 interface PlaceCardProps {
 	favorite: FavoritePlace;
 	onVisitedToggle: (id: number, visited: boolean) => void;
@@ -79,6 +86,24 @@ export function PlaceCard({
 				>
 					{favorite.visited ? "訪問済み" : "未訪問"}
 				</button>
+				{(favorite.place.categories.length > 0 ||
+					favorite.place.priceLevel) && (
+					<span className="text-xs text-zinc-500">
+						{[
+							favorite.place.categories[0],
+							favorite.place.priceLevel
+								? PRICE_LABEL[favorite.place.priceLevel]
+								: null,
+						]
+							.filter(Boolean)
+							.join(" · ")}
+					</span>
+				)}
+				{favorite.place.openingHours?.openNow === true && (
+					<span className="rounded bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold text-green-700">
+						営業中
+					</span>
+				)}
 			</div>
 
 			<textarea

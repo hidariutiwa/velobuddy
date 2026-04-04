@@ -2,6 +2,8 @@ import { PrismaClient } from "@/lib/generated/prisma/client";
 import {
 	AddFavoriteRequest,
 	FavoritePlace,
+	FilterOptions,
+	OpeningHours,
 	PlaceCache,
 	UpdateFavoriteRequest,
 } from "@/types/place";
@@ -15,6 +17,15 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter });
 
+function parseOpeningHours(raw: string | null): OpeningHours | null {
+	if (raw === null) return null;
+	try {
+		return JSON.parse(raw) as OpeningHours;
+	} catch {
+		return null;
+	}
+}
+
 function mapPlaceCache(place: {
 	id: number;
 	googlePlaceId: string;
@@ -23,6 +34,9 @@ function mapPlaceCache(place: {
 	longitude: number | null;
 	address: string | null;
 	imageUrl: string | null;
+	priceLevel: string | null;
+	openingHours: string | null;
+	categories: { id: number; name: string }[];
 }): PlaceCache {
 	return {
 		id: place.id,
@@ -32,6 +46,9 @@ function mapPlaceCache(place: {
 		longitude: place.longitude,
 		address: place.address,
 		imageUrl: place.imageUrl,
+		priceLevel: place.priceLevel,
+		openingHours: parseOpeningHours(place.openingHours),
+		categories: place.categories.map((c) => c.name),
 	};
 }
 
@@ -49,6 +66,9 @@ function mapFavoritePlace(record: {
 		longitude: number | null;
 		address: string | null;
 		imageUrl: string | null;
+		priceLevel: string | null;
+		openingHours: string | null;
+		categories: { id: number; name: string }[];
 	};
 }): FavoritePlace {
 	return {
@@ -65,6 +85,14 @@ export async function upsertPlace(
 	data: AddFavoriteRequest,
 ): Promise<PlaceCache> {
 	try {
+		const categoryConnections =
+			data.categoryNames !== undefined && data.categoryNames.length > 0
+				? data.categoryNames.map((name) => ({
+						where: { name },
+						create: { name },
+					}))
+				: undefined;
+
 		const place = await prisma.place.upsert({
 			where: { googlePlaceId: data.googlePlaceId },
 			update: {
@@ -73,6 +101,11 @@ export async function upsertPlace(
 				longitude: data.longitude,
 				address: data.address,
 				imageUrl: data.imageUrl,
+				priceLevel: data.priceLevel ?? undefined,
+				openingHours: data.openingHours ?? undefined,
+				...(categoryConnections !== undefined && {
+					categories: { connectOrCreate: categoryConnections },
+				}),
 			},
 			create: {
 				googlePlaceId: data.googlePlaceId,
@@ -81,7 +114,13 @@ export async function upsertPlace(
 				longitude: data.longitude,
 				address: data.address,
 				imageUrl: data.imageUrl,
+				priceLevel: data.priceLevel ?? null,
+				openingHours: data.openingHours ?? null,
+				...(categoryConnections !== undefined && {
+					categories: { connectOrCreate: categoryConnections },
+				}),
 			},
+			include: { categories: true },
 		});
 		return mapPlaceCache(place);
 	} catch (error) {
@@ -99,7 +138,7 @@ export async function createFavorite(
 				userId,
 				placeId,
 			},
-			include: { place: true },
+			include: { place: { include: { categories: true } } },
 		});
 		return mapFavoritePlace(record);
 	} catch (error) {
@@ -109,11 +148,41 @@ export async function createFavorite(
 
 export async function getFavoritesByUserId(
 	userId: number,
+	filter?: FilterOptions,
 ): Promise<FavoritePlace[]> {
 	try {
+		const where: {
+			userId: number;
+			visited?: boolean;
+			place?: {
+				categories?: { some: { name: string } };
+				priceLevel?: string;
+			};
+		} = { userId };
+
+		if (filter !== undefined) {
+			if (filter.visited !== undefined) {
+				where.visited = filter.visited;
+			}
+			if (
+				filter.category !== undefined ||
+				filter.priceLevel !== undefined
+			) {
+				where.place = {};
+				if (filter.category !== undefined) {
+					where.place.categories = {
+						some: { name: filter.category },
+					};
+				}
+				if (filter.priceLevel !== undefined) {
+					where.place.priceLevel = filter.priceLevel;
+				}
+			}
+		}
+
 		const records = await prisma.userFavoritePlace.findMany({
-			where: { userId },
-			include: { place: true },
+			where,
+			include: { place: { include: { categories: true } } },
 			orderBy: { createdAt: "desc" },
 		});
 		return records.map(mapFavoritePlace);
@@ -133,7 +202,7 @@ export async function updateFavorite(
 				...(data.visited !== undefined && { visited: data.visited }),
 				...(data.memo !== undefined && { memo: data.memo }),
 			},
-			include: { place: true },
+			include: { place: { include: { categories: true } } },
 		});
 		return mapFavoritePlace(record);
 	} catch (error) {
@@ -158,6 +227,7 @@ export async function getPlaceById(id: number): Promise<PlaceCache | null> {
 	try {
 		const place = await prisma.place.findUnique({
 			where: { id },
+			include: { categories: true },
 		});
 		if (place === null) return null;
 		return mapPlaceCache(place);

@@ -12,6 +12,16 @@ export interface GooglePlacesTextSearchResult {
 	photos: Array<{
 		name: string;
 	}> | null;
+	priceLevel?: string;
+	regularOpeningHours?: {
+		openNow?: boolean;
+		periods?: Array<{
+			open: { day: number; hour: number; minute: number };
+			close?: { day: number; hour: number; minute: number };
+		}>;
+		weekdayDescriptions?: string[];
+	};
+	types?: string[];
 }
 
 export interface GooglePlacesTextSearchApiResponse {

@@ -1,18 +1,27 @@
 "use client";
+import { FilterBar } from "@/components/filter/FilterBar";
 import MainContainer from "@/components/layout/mainContainer";
 import { PlaceCard } from "@/components/utils/place";
 import { SearchBar } from "@/components/utils/search";
+import { isOpenNow } from "@/lib/utils/openingHours";
 import { MapPlace } from "@/types/map";
-import { FavoritePlace, PlaceCache, PlaceSearchResponse } from "@/types/place";
+import {
+	FavoritePlace,
+	FilterOptions,
+	PlaceCache,
+	PlaceSearchResponse,
+} from "@/types/place";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function Page() {
 	const [places, setPlaces] = useState<PlaceCache[]>([]);
+	const [filter, setFilter] = useState<FilterOptions>({});
 	const { status } = useSession();
 	const [favoritesMap, setFavoritesMap] = useState<Map<string, number>>(
 		new Map(),
 	);
+	const [favoritesDetail, setFavoritesDetail] = useState<FavoritePlace[]>([]);
 
 	useEffect(() => {
 		if (status !== "authenticated") return;
@@ -24,6 +33,7 @@ export default function Page() {
 				const map = new Map<string, number>();
 				data.forEach((f) => map.set(f.place.googlePlaceId, f.id));
 				setFavoritesMap(map);
+				setFavoritesDetail(data);
 			} catch {
 				// ignore
 			}
@@ -87,11 +97,50 @@ export default function Page() {
 		}
 	};
 
-	const cards = places.map((place, index) => {
-		const mapPlace: MapPlace = { ...place, category: "観光" };
+	const visitedMap = useMemo(() => {
+		const map = new Map<string, boolean>();
+		favoritesDetail.forEach((f) =>
+			map.set(f.place.googlePlaceId, f.visited),
+		);
+		return map;
+	}, [favoritesDetail]);
+
+	const filteredPlaces = useMemo(() => {
+		return places.filter((place) => {
+			if (
+				filter.category &&
+				!place.categories.includes(filter.category)
+			) {
+				return false;
+			}
+			if (filter.priceLevel && place.priceLevel !== filter.priceLevel) {
+				return false;
+			}
+			if (filter.isFavorite && !favoritesMap.has(place.googlePlaceId)) {
+				return false;
+			}
+			if (filter.openNow && !isOpenNow(place.openingHours)) {
+				return false;
+			}
+			if (filter.visited === true) {
+				if (visitedMap.get(place.googlePlaceId) !== true) return false;
+			}
+			if (filter.visited === false) {
+				if (visitedMap.get(place.googlePlaceId) === true) return false;
+			}
+			return true;
+		});
+	}, [places, filter, favoritesMap, visitedMap]);
+
+	const cards = filteredPlaces.map((place) => {
+		const category = place.categories[0] ?? "観光";
+		const mapPlace: MapPlace = {
+			...place,
+			category: category as MapPlace["category"],
+		};
 		return (
 			<PlaceCard
-				key={index}
+				key={place.googlePlaceId}
 				place={mapPlace}
 				isFavorite={favoritesMap.has(place.googlePlaceId)}
 				favoriteId={favoritesMap.get(place.googlePlaceId) ?? null}
@@ -104,6 +153,11 @@ export default function Page() {
 		<MainContainer>
 			<div className="flex h-full w-full flex-col items-center justify-start gap-4 p-4">
 				<SearchBar onSearch={handleSearch} />
+				<FilterBar
+					filter={filter}
+					onChange={setFilter}
+					showFavoriteFilter={true}
+				/>
 				<div className="flex h-0 w-full grow flex-col justify-start gap-4 overflow-y-auto">
 					{cards}
 				</div>
