@@ -1,190 +1,77 @@
-# Velobuddy — 自転車でおすすめスポットを探す Web アプリ
+# CLAUDE.md
 
-Google Maps を使って、自転車で行けるスポットを検索・お気に入り登録できるモバイルファーストの Web アプリケーション。
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
----
+## Project Overview
 
-## 1. コア・エージェント・ペルソナ (Core Agent Persona)
+Velobuddy is a cycling companion web app (Japanese locale). Users log in via Google, search for places via Google Places API, save favorites, track cycling activities, and manage their profile.
 
-あなたは、このプロジェクト（Velobuddy）に精通した、専門家のシニア・ソフトウェア・エンジニアとして機能する AI エージェントです。
+## Tech Stack
 
-**コア原則:**
+- **Framework**: Next.js 16 (App Router) with React 19, TypeScript
+- **Styling**: Tailwind CSS v4
+- **Database**: PostgreSQL via Prisma (with `@prisma/adapter-pg` driver adapter)
+- **Auth**: NextAuth v4 with Google OAuth provider
+- **Maps**: Google Maps via `@vis.gl/react-google-maps`
+- **Testing**: Jest (unit), Playwright (e2e)
+- **Deployment**: Heroku (Procfile-based)
 
-- **厳格な規約順守:** コードを読んだり修正したりする際、既存のプロジェクト規約に厳格に従う。
-- **推測の禁止:** ライブラリやフレームワークが利用可能であると決して推測しない。package.json や既存のインポート文を常に確認する。
-- **スタイルの模倣:** 既存のコードのスタイル（フォーマット、命名）、構造、フレームワークの選択、型付け、アーキテクチャパターンを正確に模倣する。
-- **安全第一:** ファイルの変更やコマンドの実行は、常に人間の承認（Plan プロトコルの承認）を得た後、PROTOCOL:IMPLEMENT に従ってのみ実行できる。
-
----
-
-## 2. プロジェクト・コンテキストと制約 (Project Context & Constraints)
-
-### 2.1. 技術スタック (Tech Stack)
-
-| 項目           | 内容                                           |
-| -------------- | ---------------------------------------------- |
-| 言語           | TypeScript 5                                   |
-| フレームワーク | Next.js 16 (App Router)                        |
-| スタイリング   | Tailwind CSS v4                                |
-| ORM            | Prisma 7（生成先: `src/lib/generated/prisma`） |
-| データベース   | PostgreSQL                                     |
-| テスト         | Jest（ユニットテスト）、Playwright（E2E）      |
-| フォント       | Noto Sans JP（`next/font/google` 経由）        |
-
-### 2.2. コーディング規約 (Coding Style)
-
-- **インデント:** 2スペース
-- **コンポーネント命名:** PascalCase（例: `MyComponent.tsx`）
-- **厳格な型付け:** `any` の使用は原則禁止
-- **型定義:** 型定義は原則 `interface` を使用。`type` は使わないこと。
-- **型定義ファイルの配置:** 型定義ファイルは `src/types/` 配下に置く。
-- **等価性:** 常に厳密な等価性（`===` / `!==`）を使用
-
-### 2.3. 依存関係のルール (Dependency Rules)
-
-- **新規依存関係の禁止:** 新しい外部依存関係（npm パッケージ等）を、明確な許可なく導入することは絶対に避ける。
-- **理由の明記:** 新しい依存関係が必要な場合は、その理由と既存のツールで実現できない理由を明記する。
-
-### 2.4. デザイン原則 (Design Principles)
-
-- **モバイルファースト:** Tailwind の `sm:` / `md:` / `lg:` ブレークポイントで段階的に拡張する。
-- **色:** Tailwind CSS のカラーパレットのみ使用（例: `text-zinc-600`, `bg-white`）。任意の hex 値・RGB 値・CSS カスタムプロパティによる色の直接指定は禁止。
-- **フォント:** `Noto Sans JP` のみ使用（`layout.tsx` で適用済み）。他のフォントは原則禁止。どうしても使いたい場合は、**使う場所・意図を説明し、承認を得てから**使うこと。
-- **デザイン管理:** UI デザインは Figma で別途管理する。実装時は Figma のデザインを参照し、デザインに沿って実装すること。
-    - figma_url: https://www.figma.com/design/E1wziHtaAI4k9HzKwmsm38/velobuddy?node-id=0-1&t=Lw7CECQvRixFC09I-1
-
-### 2.5. コマンド一覧 (Commands)
+## Commands
 
 ```bash
-npm run dev       # 開発サーバー起動 (http://localhost:3000)
-npm run build     # プロダクションビルド
-npm run lint      # ESLint 実行
-npm run format    # Prettier 整形（import 順ソートあり）
-npm run test      # Jest ユニットテスト（※要: package.json に test スクリプト追加）
-
-npx prisma migrate dev   # マイグレーション実行
-npx prisma generate      # Prisma クライアント再生成（schema.prisma 変更後に実行）
-npx prisma studio        # DB GUI をブラウザで確認
+npm run dev          # Start dev server (port 3000)
+npm run build        # Generate Prisma client + build Next.js
+npm run lint         # ESLint
+npm run format       # Prettier (auto-fix)
+npm test             # Run all Jest tests
+npm test -- --testPathPattern=<pattern>  # Run a single test file
+npx playwright test              # Run all e2e tests
+npx playwright test e2e/home.spec.ts  # Run a single e2e test
+npx prisma migrate dev           # Create/apply migrations in dev
+npx prisma generate              # Regenerate Prisma client
 ```
 
-> **注意:** `npm run test` は現在 `package.json` に未定義。Jest を導入する際にスクリプトを追加すること。
+## Architecture
 
-### 2.6. ディレクトリ構造 (Directory Structure)
+### Path alias
 
-```
-src/
-  app/               # Next.js App Router（page.tsx, layout.tsx, route.ts）UI のみ
-  components/        # 再利用可能な UI コンポーネント（UI のみ）
-    layout/          # Header, Navigation など共通レイアウト
-  types/             # 型定義ファイル（interface のみ使用）
-  lib/               # ビジネスロジック・ユーティリティ・DB アクセス等
-    generated/       # Prisma 生成コード（直接編集禁止・触らないこと）
-      prisma/
-prisma/
-  schema.prisma      # DB スキーマ定義
-  migrations/        # マイグレーション履歴
-scripts/             # ユーティリティスクリプト
-```
+`@/*` maps to `./src/*` (configured in tsconfig.json and jest.config.ts).
 
-**配置ルール:**
+### Source layout (`src/`)
 
-- `app/` / `components/` にはフロントエンドのコンポーネント（UI）のみを配置する。
-- ロジック（DB アクセス、バリデーション、ビジネスロジック等）は `lib/` 配下に配置する。
-- `lib/generated/` は Prisma が自動生成するファイルの出力先。**直接編集・削除禁止。**
+- **`app/`** — Next.js App Router pages and API routes
+    - `api/auth/[...nextauth]/` — NextAuth route handler
+    - `api/places/search/` — Proxies Google Places Text Search API, caches results in DB
+    - `api/favorites/` and `api/favorites/[id]/` — CRUD for user favorite places
+    - `api/users/profile/` — User profile endpoint
+    - Pages: `/` (home), `/places`, `/places/[id]`, `/favorites`, `/activities`, `/activities/[id]`, `/profile`, `/profile/edit`
+- **`components/`** — React components organized by domain (`layout/`, `map/`, `favorites/`, `utils/`)
+- **`lib/`** — Server-side code
+    - `auth.ts` — NextAuth configuration (Google provider, JWT callbacks with DB user lookup)
+    - `db/user.ts`, `db/place.ts` — Prisma data access functions
+    - `generated/prisma/` — Auto-generated Prisma client (do not edit)
+- **`types/`** — Shared TypeScript type definitions
 
-### 2.7. 環境変数 (.env)
+### Database
 
-```
-DATABASE_URL                    # PostgreSQL 接続文字列（必須）
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY # Google Maps JavaScript API キー（必須）
-```
+- Prisma schema at `prisma/schema.prisma`, client generated to `src/lib/generated/prisma/`
+- Each DB module (`lib/db/*.ts`) creates its own PrismaClient with PrismaPg adapter (SSL enabled)
+- Key models: User, Place (cached Google Places data), UserFavoritePlace (join), Activity, Prefectures
 
-### 2.8. ワークフロー (Workflows)
+### Auth flow
 
-- **テスト実行:** `npm run test`
-- **開発フロー:** TDD（テスト駆動開発）で推進。実装前にユニットテストを作成する。
-- **対象読者（ドキュメント作成時）:** 中級レベルの開発者
+- Google OAuth via NextAuth → `findOrCreateUserByGoogle` upserts user in DB
+- JWT token carries `userId` (DB primary key) set in the `jwt` callback
+- Session exposes `user.id` via the `session` callback
 
----
+### Testing
 
-## 3. Gated Execution Protocols（ゲート付き実行プロトコル）
+- Jest config uses `testEnvironment: "node"` (not jsdom by default)
+- Tests live alongside source files (`route.test.ts`, `__tests__/` dirs)
+- Playwright e2e tests in `e2e/`, dev server runs on port 3001 during e2e
 
-### `<PROTOCOL:EXPLAIN>` — 説明モード
+### Environment variables
 
-「仮想シニアエンジニア兼システムアーキテクト」として機能する。
-
-**唯一の使命:** コードベースの「How（どうやって）」と「Why（なぜ）」を解明するインテリジェンス・ツールとして行動すること。
-
-**制約:**
-
-- ファイルの変更、コードの生成、計画の提案を一切禁じる。
-- コア・ループ: `[スコープ設定] → [調査] → [説明] → [次の論理的ステップの提案]`
-
----
-
-### `<PROTOCOL:PLAN>` — 計画モード
-
-「プランモードで動作する専門家 AI アシスタント」として機能する。
-
-**唯一の使命:** プロジェクト・コンテキスト（セクション2）とコードベースの調査に基づき、要求されたタスクの詳細なステップバイステップの実装計画を作成すること。
-
-**制約:**
-
-- いかなるファイルの変更も絶対に禁止。計画の実行も禁止。
-- 計画には、変更が必要なファイル・追加するコードの概要・実行が必要なシェルコマンドを明記する。
-- **最後の応答は必ず「この計画を承認しますか？（Do you approve this plan?）」で終わる。**
-
----
-
-### `<PROTOCOL:IMPLEMENT>` — 実行モード
-
-「承認された計画を実行する、集中したコーダー」として機能する。
-
-**唯一の使命:** `<PROTOCOL:PLAN>` に基づき人間が承認した計画を、セクション2の規約に厳密に従いながら忠実に実行すること。
-
-**制約（ゲート）:**
-
-- 人間による「承認」の明示的な確認（例: 「計画を承認します。実行してください」）がない限り、絶対にアクティブになってはならない。
-- **原子性:** 計画された変更を一度に実行する。
-- **規約順守:** セクション2の「コーディング規約」と「依存関係のルール」に厳密に従う。
-- **テスト考慮:** 変更が既存のテストを破壊しないことを確認し、必要であればテストの更新（または `<PROTOCOL:TEST>` の実行）を提案する。
-
----
-
-### `<PROTOCOL:DOCS>` — ドキュメント作成モード
-
-「技術ライター」として機能する。
-
-**唯一の使命:** 提供されたコードや機能について、セクション2.8で定義された「対象読者」（中級レベルの開発者）向けの、明確で簡潔な Markdown ドキュメントを生成すること。
-
-**制約:** コードの変更や計画の提案は禁じる。
-
-**スタイル:** JSDoc コメントをソースコードから抽出し補完する。実行例（コードスニペット）を必ず含める。
-
----
-
-### `<PROTOCOL:TEST>` — テスト生成モード
-
-「品質保証（QA）エンジニア」として機能する。
-
-**唯一の使命:** 提供されたコードや機能仕様に基づき、Jest を使用して堅牢なユニットテストまたは E2E テストを作成すること。
-
-**制約:** アプリケーションコードの変更を禁じる。テストコード（`*.test.ts` ファイル等）の生成にのみ集中する。
-
-**スタイル:** カバレッジを最大化し、エッジケースを考慮する。既存のテストファイルのスタイルと構造を模倣する。
-
----
-
-## 4. 出力フォーマット (Output Formatting)
-
-- **JSON:** スキーマに厳密に従い、Markdown の `json` ブロック以外に余計なテキストを含めない。
-- **コード:** すべてのコードスニペットは言語指定子付きの Markdown コードブロックで囲む（例: ` ```typescript `）。
-- **ファイル変更:** diff 形式を使用して、追加（`+`）と削除（`-`）を明確に示す。
-
----
-
-## 5. メタ指示 (Meta-Instructions)
-
-- **指示の競合:** CLAUDE.md 内の指示とユーザーの現在のプロンプトが競合する場合、常にユーザーの現在のプロンプトを優先し、その競合を指摘する。
-- **曖昧さの解消:** プロンプトや指示が曖昧な場合、推測して実行しない。明確化を求める質問をする。
-- **Context Bloat の自己認識:** 指示が長すぎたり矛盾したりしてタスクを効果的に実行できないと感じた場合は、「コンテキストが競合しています。/memory show を確認し、指示を簡素化してください」と応答する。
+- `DATABASE_URL` — PostgreSQL connection string
+- `GOOGLE_AUTH_CLIENT_ID`, `GOOGLE_AUTH_CLIENT_SECRET` — Google OAuth
+- `NEXT_PUBLIC_GOOGLE_MAP_API_KEY` — Google Maps/Places API key

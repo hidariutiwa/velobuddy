@@ -3,6 +3,7 @@ import { Activity } from "@/lib/generated/prisma/client";
 export const mockActivities: Activity[] = [
 	{
 		id: 1,
+		userId: 1,
 		activityAt: new Date("2026-03-01"),
 		drivingTime: 1823,
 		distance: 10.54,
@@ -18,6 +19,7 @@ export const mockActivities: Activity[] = [
 	},
 	{
 		id: 2,
+		userId: 1,
 		activityAt: new Date("2026-03-01"),
 		drivingTime: 18230,
 		distance: 10.54,
@@ -31,6 +33,7 @@ export const mockActivities: Activity[] = [
 	},
 	{
 		id: 3,
+		userId: 1,
 		activityAt: new Date("2026-03-01"),
 		drivingTime: 1823,
 		distance: 10.54,
@@ -44,6 +47,7 @@ export const mockActivities: Activity[] = [
 	},
 	{
 		id: 4,
+		userId: 1,
 		activityAt: new Date("2026-03-01"),
 		drivingTime: 1823,
 		distance: 10.54,
@@ -57,6 +61,7 @@ export const mockActivities: Activity[] = [
 	},
 	{
 		id: 5,
+		userId: 1,
 		activityAt: new Date("2026-03-01"),
 		drivingTime: 1823,
 		distance: 10.54,
@@ -70,6 +75,7 @@ export const mockActivities: Activity[] = [
 	},
 	{
 		id: 6,
+		userId: 1,
 		activityAt: new Date("2026-03-01"),
 		drivingTime: 1823,
 		distance: 10.54,
