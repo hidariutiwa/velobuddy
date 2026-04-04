@@ -1,4 +1,3 @@
-import { MapPlace } from "@/types/map";
 import { PlaceCache } from "@/types/place";
 import Link from "next/link";
 import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
@@ -18,7 +17,7 @@ function OpenNowBadge() {
 	);
 }
 
-function PlaceBadges({ place }: { place: MapPlace }) {
+function PlaceBadges({ place }: { place: PlaceCache }) {
 	const priceLabel = place.priceLevel ? PRICE_LABEL[place.priceLevel] : null;
 	const openNow = place.openingHours?.openNow === true;
 
@@ -65,7 +64,7 @@ export function PlaceBar({
 	favoriteId,
 	onFavoriteToggle,
 }: {
-	place: MapPlace;
+	place: PlaceCache;
 	isFavorite?: boolean;
 	favoriteId?: number | null;
 	onFavoriteToggle?: (place: PlaceCache, favoriteId: number | null) => void;
@@ -81,7 +80,7 @@ export function PlaceBar({
 					>
 						{place.name}
 					</Link>
-					<p>{place.category}</p>
+					<p>{place.categories?.[0] ?? ""}</p>
 					<p>{place.address || ""}</p>
 					<PlaceBadges place={place} />
 				</div>
@@ -104,7 +103,7 @@ export function PlaceCard({
 	favoriteId,
 	onFavoriteToggle,
 }: {
-	place: MapPlace;
+	place: PlaceCache;
 	isFavorite?: boolean;
 	favoriteId?: number | null;
 	onFavoriteToggle?: (place: PlaceCache, favoriteId: number | null) => void;
@@ -120,7 +119,7 @@ export function PlaceCard({
 					>
 						{place.name}
 					</Link>
-					<p>{place.category}</p>
+					<p>{place.categories?.[0] ?? ""}</p>
 					<p>{place.address || ""}</p>
 					<PlaceBadges place={place} />
 				</div>

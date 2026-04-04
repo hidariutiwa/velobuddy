@@ -4,7 +4,6 @@ import MainContainer from "@/components/layout/mainContainer";
 import { PlaceCard } from "@/components/utils/place";
 import { SearchBar } from "@/components/utils/search";
 import { isOpenNow } from "@/lib/utils/openingHours";
-import { MapPlace } from "@/types/map";
 import {
 	FavoritePlace,
 	FilterOptions,
@@ -132,22 +131,15 @@ export default function Page() {
 		});
 	}, [places, filter, favoritesMap, visitedMap]);
 
-	const cards = filteredPlaces.map((place) => {
-		const category = place.categories[0] ?? "観光";
-		const mapPlace: MapPlace = {
-			...place,
-			category: category as MapPlace["category"],
-		};
-		return (
-			<PlaceCard
-				key={place.googlePlaceId}
-				place={mapPlace}
-				isFavorite={favoritesMap.has(place.googlePlaceId)}
-				favoriteId={favoritesMap.get(place.googlePlaceId) ?? null}
-				onFavoriteToggle={handleFavoriteToggle}
-			/>
-		);
-	});
+	const cards = filteredPlaces.map((place) => (
+		<PlaceCard
+			key={place.googlePlaceId}
+			place={place}
+			isFavorite={favoritesMap.has(place.googlePlaceId)}
+			favoriteId={favoritesMap.get(place.googlePlaceId) ?? null}
+			onFavoriteToggle={handleFavoriteToggle}
+		/>
+	));
 
 	return (
 		<MainContainer>
