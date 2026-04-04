@@ -3,7 +3,6 @@ import MainContainer from "@/components/layout/mainContainer";
 import GoogleMap from "@/components/map/GoogleMap";
 import { PlaceBar } from "@/components/utils/place";
 import { SearchBar } from "@/components/utils/search";
-import { mockPlaces } from "@/types/map";
 import { PlaceCache, PlaceSearchResponse } from "@/types/place";
 import { useEffect, useState } from "react";
 
@@ -157,7 +156,9 @@ export default function Home() {
 						</button>
 					))}
 				</div>
-				<PlaceBar place={mockPlaces[0]} />
+				{searchResults.length > 0 && (
+					<PlaceBar place={searchResults[0]} />
+				)}
 			</div>
 		</MainContainer>
 	);

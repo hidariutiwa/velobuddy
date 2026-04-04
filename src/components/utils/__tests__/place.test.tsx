@@ -30,7 +30,9 @@ const mockPlace = {
 	longitude: 139.6956,
 	address: "東京都渋谷区",
 	imageUrl: null,
-	category: "公園" as const,
+	priceLevel: null,
+	openingHours: null,
+	categories: ["公園"],
 };
 
 describe("PlaceCard", () => {
