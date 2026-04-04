@@ -25,6 +25,7 @@ model User {
     createdAt          DateTime            @default(now())
     updatedAt          DateTime            @updatedAt
     userFavoritePlaces UserFavoritePlace[]
+    activities         Activity[]
 }
 
 model UserAddress {
@@ -74,6 +75,8 @@ model UserFavoritePlace {
 
 model Activity {
     id              Int       @id @default(autoincrement())
+    userId          Int
+    user            User      @relation(fields: [userId], references: [id])
     activityAt      DateTime?
     distance        Float
     averageVelocity Float

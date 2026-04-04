@@ -154,6 +154,18 @@ export async function deleteFavorite(
 	}
 }
 
+export async function getPlaceById(id: number): Promise<PlaceCache | null> {
+	try {
+		const place = await prisma.place.findUnique({
+			where: { id },
+		});
+		if (place === null) return null;
+		return mapPlaceCache(place);
+	} catch (error) {
+		throw error;
+	}
+}
+
 export async function getFavoriteById(
 	id: number,
 ): Promise<{ id: number; userId: number } | null> {

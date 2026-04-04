@@ -298,21 +298,27 @@ test.describe("favorite toggle", () => {
 				status: 200,
 				contentType: "application/json",
 				body: JSON.stringify({
-					user: { id: 1, name: "テストユーザー", email: "test@example.com" },
+					user: {
+						id: 1,
+						name: "テストユーザー",
+						email: "test@example.com",
+					},
 					expires: "2099-01-01",
 				}),
-			})
+			}),
 		);
 		await page.route("**/api/places/search**", (route) =>
 			route.fulfill({
 				status: 200,
 				contentType: "application/json",
 				body: JSON.stringify(searchResults),
-			})
+			}),
 		);
 	});
 
-	test("ハートボタンクリックでPOST /api/favoritesが呼ばれる", async ({ page }) => {
+	test("ハートボタンクリックでPOST /api/favoritesが呼ばれる", async ({
+		page,
+	}) => {
 		await page.route("**/api/favorites", async (route) => {
 			if (route.request().method() === "GET") {
 				await route.fulfill({
@@ -342,8 +348,10 @@ test.describe("favorite toggle", () => {
 		await page.waitForSelector('[aria-label="お気に入り追加"]');
 
 		const [request] = await Promise.all([
-			page.waitForRequest((req) =>
-				req.url().includes("/api/favorites") && req.method() === "POST"
+			page.waitForRequest(
+				(req) =>
+					req.url().includes("/api/favorites") &&
+					req.method() === "POST",
 			),
 			page.click('[aria-label="お気に入り追加"]'),
 		]);
@@ -384,8 +392,10 @@ test.describe("favorite toggle", () => {
 		await page.waitForSelector('[aria-label="お気に入り解除"]');
 
 		const [request] = await Promise.all([
-			page.waitForRequest((req) =>
-				req.url().includes("/api/favorites/5") && req.method() === "DELETE"
+			page.waitForRequest(
+				(req) =>
+					req.url().includes("/api/favorites/5") &&
+					req.method() === "DELETE",
 			),
 			page.click('[aria-label="お気に入り解除"]'),
 		]);
