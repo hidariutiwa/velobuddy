@@ -17,16 +17,18 @@ export default async function Page() {
 
 	return (
 		<MainContainer>
-			<div className="flex h-full w-full flex-col gap-4">
+			<div className="relative flex h-full w-full flex-col gap-4">
 				<p>アクティビティ一覧</p>
-				<StravaSyncButton stravaConnected={stravaTokens !== null} />
 				<ActivityList initialActivities={activities} />
-				<Link
-					href="/activities/new"
-					className="fixed right-6 bottom-24 flex h-13 w-13 items-center justify-center rounded-full bg-blue-500 text-2xl font-bold text-white shadow-lg shadow-blue-500/35"
-				>
-					+
-				</Link>
+				<div className="absolute bottom-0 flex h-fit w-full items-center justify-between gap-4 p-4">
+					<StravaSyncButton stravaConnected={stravaTokens !== null} />
+					<Link
+						href="/activities/new"
+						className="flex h-13 w-13 items-center justify-center rounded-full bg-blue-500 text-2xl font-bold text-white shadow-lg shadow-blue-500/35"
+					>
+						+
+					</Link>
+				</div>
 			</div>
 		</MainContainer>
 	);

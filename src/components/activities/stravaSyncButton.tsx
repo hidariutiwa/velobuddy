@@ -43,7 +43,7 @@ export default function StravaSyncButton({
 			<button
 				onClick={handleSync}
 				disabled={isSyncing}
-				className="w-full rounded-xl bg-blue-500 py-3 text-sm font-bold text-white disabled:opacity-50"
+				className="h-fit w-fit rounded-xl bg-blue-500 px-8 py-3 text-sm font-bold text-white disabled:opacity-50"
 			>
 				{isSyncing
 					? "同期中..."

@@ -111,7 +111,7 @@ export default function HomeMapView() {
 
 				{/* Search bar + GPS button */}
 				<div className="absolute top-24 right-0 left-0 flex items-center gap-2 px-4">
-					<div className="flex flex-1 items-center gap-2 rounded-full bg-white px-4 py-3 shadow-md">
+					<div className="flex flex-1 items-center gap-2 rounded-full bg-white shadow-md">
 						<SearchBar onSearch={handleSearch} />
 					</div>
 					<button
@@ -141,7 +141,7 @@ export default function HomeMapView() {
 				</div>
 
 				{/* Category chips */}
-				<div className="absolute top-[172px] right-0 left-0 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none]">
+				<div className="absolute top-[152px] right-0 left-0 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none]">
 					{categories.map((cat) => (
 						<button
 							key={cat}
