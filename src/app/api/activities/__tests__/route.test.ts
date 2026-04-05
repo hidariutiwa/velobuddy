@@ -32,14 +32,37 @@ const mockCreateActivity = createActivity as jest.MockedFunction<
 
 const mockActivityResponse: ActivityResponse = {
 	id: 1,
-	activityAt: "2026-03-01T00:00:00.000Z",
-	distance: 10.54,
-	averageVelocity: 20.01,
-	maxVelocity: 30.9,
-	elevation: 23.98,
-	burnCalories: 384,
-	drivingTime: 1823,
+	stravaId: null,
+	source: "manual",
+	name: "テストライド",
+	sportType: "Ride",
+	startDate: "2026-03-01T00:00:00.000Z",
+	timezone: "(GMT+09:00) Asia/Tokyo",
+	movingTime: 1831,
+	elapsedTime: 1920,
+	distance: 10199.2,
+	totalElevationGain: 22.6,
+	elevHigh: 63.7,
+	elevLow: 42.8,
+	averageSpeed: 5.57,
+	maxSpeed: 9.24,
+	averageWatts: 71.1,
+	deviceWatts: false,
+	kilojoules: 130.2,
+	averageCadence: null,
+	averageHeartrate: null,
+	maxHeartrate: null,
+	hasHeartrate: false,
+	calories: 382,
+	averageTemp: 14,
 	polyline: null,
+	summaryPolyline: null,
+	startLatlng: null,
+	endLatlng: null,
+	trainer: false,
+	commute: false,
+	manual: false,
+	gearId: null,
 	createdAt: "2026-03-01T00:00:00.000Z",
 	updatedAt: "2026-03-01T00:00:00.000Z",
 };
@@ -103,12 +126,11 @@ describe("POST /api/activities", () => {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
-				distance: 10.54,
-				averageVelocity: 20.01,
-				maxVelocity: 30.9,
-				elevation: 23.98,
-				burnCalories: 384,
-				drivingTime: 1823,
+				distance: 10199.2,
+				movingTime: 1831,
+				elapsedTime: 1920,
+				averageSpeed: 5.57,
+				maxSpeed: 9.24,
 			}),
 		});
 
@@ -118,7 +140,7 @@ describe("POST /api/activities", () => {
 		expect(response.status).toBe(201);
 		const body = (await response.json()) as ActivityResponse;
 		expect(body.id).toBe(1);
-		expect(body.distance).toBe(10.54);
+		expect(body.distance).toBe(10199.2);
 	});
 
 	it("未認証の場合 401 を返す", async () => {
@@ -128,12 +150,11 @@ describe("POST /api/activities", () => {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
-				distance: 10.54,
-				averageVelocity: 20.01,
-				maxVelocity: 30.9,
-				elevation: 23.98,
-				burnCalories: 384,
-				drivingTime: 1823,
+				distance: 10199.2,
+				movingTime: 1831,
+				elapsedTime: 1920,
+				averageSpeed: 5.57,
+				maxSpeed: 9.24,
 			}),
 		});
 
@@ -158,11 +179,10 @@ describe("POST /api/activities", () => {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
-				averageVelocity: 20.01,
-				maxVelocity: 30.9,
-				elevation: 23.98,
-				burnCalories: 384,
-				drivingTime: 1823,
+				movingTime: 1831,
+				elapsedTime: 1920,
+				averageSpeed: 5.57,
+				maxSpeed: 9.24,
 			}),
 		});
 

@@ -16,12 +16,14 @@ function createDisplayTime(seconds: number): string {
 }
 
 function ActivityInformation({ activity }: { activity: ActivityResponse }) {
-	const displayTime = createDisplayTime(activity.drivingTime);
+	const displayTime = createDisplayTime(activity.movingTime);
+	const distanceKm = (activity.distance / 1000).toFixed(1);
 
 	return (
 		<div className="flex h-24 w-full flex-col items-start justify-center gap-2 p-3">
+			<p className="text-sm text-zinc-500">{activity.name || "無題"}</p>
 			<p className="font-bold">
-				{activity.distance}
+				{distanceKm}
 				<span className="text-sm"> km</span>
 			</p>
 			<p className="text-base">{displayTime}</p>
@@ -42,7 +44,9 @@ export function ActivitySheet({
 		<Link href={`/activities/${id}`}>
 			<div className="flex h-fit w-full flex-col border-t border-b border-zinc-200 bg-white">
 				<ActivityInformation activity={activity} />
-				<ActivityRouteMap polyline={activity.polyline} />
+				<ActivityRouteMap
+					polyline={activity.summaryPolyline ?? activity.polyline}
+				/>
 			</div>
 		</Link>
 	);

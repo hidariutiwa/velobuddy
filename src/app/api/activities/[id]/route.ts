@@ -104,14 +104,14 @@ export async function PATCH(
 	const raw = body as Record<string, unknown>;
 	const input: UpdateActivityRequest = {};
 
-	if ("activityAt" in raw) {
-		if (raw.activityAt !== null && typeof raw.activityAt !== "string") {
+	if ("name" in raw) {
+		if (typeof raw.name !== "string") {
 			return NextResponse.json(
-				{ error: "activityAt must be a string or null" },
+				{ error: "name must be a string" },
 				{ status: 400 },
 			);
 		}
-		input.activityAt = raw.activityAt as string | null;
+		input.name = raw.name;
 	}
 
 	if ("distance" in raw) {
@@ -124,54 +124,64 @@ export async function PATCH(
 		input.distance = raw.distance;
 	}
 
-	if ("averageVelocity" in raw) {
-		if (typeof raw.averageVelocity !== "number") {
+	if ("movingTime" in raw) {
+		if (typeof raw.movingTime !== "number") {
 			return NextResponse.json(
-				{ error: "averageVelocity must be a number" },
+				{ error: "movingTime must be a number" },
 				{ status: 400 },
 			);
 		}
-		input.averageVelocity = raw.averageVelocity;
+		input.movingTime = raw.movingTime;
 	}
 
-	if ("maxVelocity" in raw) {
-		if (typeof raw.maxVelocity !== "number") {
+	if ("elapsedTime" in raw) {
+		if (typeof raw.elapsedTime !== "number") {
 			return NextResponse.json(
-				{ error: "maxVelocity must be a number" },
+				{ error: "elapsedTime must be a number" },
 				{ status: 400 },
 			);
 		}
-		input.maxVelocity = raw.maxVelocity;
+		input.elapsedTime = raw.elapsedTime;
 	}
 
-	if ("elevation" in raw) {
-		if (typeof raw.elevation !== "number") {
+	if ("averageSpeed" in raw) {
+		if (typeof raw.averageSpeed !== "number") {
 			return NextResponse.json(
-				{ error: "elevation must be a number" },
+				{ error: "averageSpeed must be a number" },
 				{ status: 400 },
 			);
 		}
-		input.elevation = raw.elevation;
+		input.averageSpeed = raw.averageSpeed;
 	}
 
-	if ("burnCalories" in raw) {
-		if (typeof raw.burnCalories !== "number") {
+	if ("maxSpeed" in raw) {
+		if (typeof raw.maxSpeed !== "number") {
 			return NextResponse.json(
-				{ error: "burnCalories must be a number" },
+				{ error: "maxSpeed must be a number" },
 				{ status: 400 },
 			);
 		}
-		input.burnCalories = raw.burnCalories;
+		input.maxSpeed = raw.maxSpeed;
 	}
 
-	if ("drivingTime" in raw) {
-		if (typeof raw.drivingTime !== "number") {
+	if ("totalElevationGain" in raw) {
+		if (typeof raw.totalElevationGain !== "number") {
 			return NextResponse.json(
-				{ error: "drivingTime must be a number" },
+				{ error: "totalElevationGain must be a number" },
 				{ status: 400 },
 			);
 		}
-		input.drivingTime = raw.drivingTime;
+		input.totalElevationGain = raw.totalElevationGain;
+	}
+
+	if ("calories" in raw) {
+		if (raw.calories !== null && typeof raw.calories !== "number") {
+			return NextResponse.json(
+				{ error: "calories must be a number or null" },
+				{ status: 400 },
+			);
+		}
+		input.calories = raw.calories as number | null;
 	}
 
 	if ("polyline" in raw) {

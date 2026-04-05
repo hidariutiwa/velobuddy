@@ -1,35 +1,123 @@
+export interface ActivitySplitResponse {
+	split: number;
+	distance: number;
+	elapsedTime: number;
+	movingTime: number;
+	elevationDifference: number;
+	averageSpeed: number;
+	paceZone: number;
+}
+
 export interface ActivityResponse {
 	id: number;
-	activityAt: string | null;
+	stravaId: string | null; // BigInt serialized as string
+	source: string;
+
+	name: string;
+	sportType: string;
+
+	startDate: string | null;
+	timezone: string | null;
+	movingTime: number;
+	elapsedTime: number;
+
 	distance: number;
-	averageVelocity: number;
-	maxVelocity: number;
-	elevation: number;
-	burnCalories: number;
-	drivingTime: number;
+	totalElevationGain: number;
+	elevHigh: number | null;
+	elevLow: number | null;
+
+	averageSpeed: number;
+	maxSpeed: number;
+
+	averageWatts: number | null;
+	deviceWatts: boolean;
+	kilojoules: number | null;
+
+	averageCadence: number | null;
+	averageHeartrate: number | null;
+	maxHeartrate: number | null;
+	hasHeartrate: boolean;
+	calories: number | null;
+	averageTemp: number | null;
+
 	polyline: string | null;
+	summaryPolyline: string | null;
+	startLatlng: [number, number] | null;
+	endLatlng: [number, number] | null;
+
+	trainer: boolean;
+	commute: boolean;
+	manual: boolean;
+
+	gearId: string | null;
 	createdAt: string;
 	updatedAt: string;
+
+	splits?: ActivitySplitResponse[];
 }
 
 export interface CreateActivityRequest {
-	activityAt?: string | null;
+	stravaId?: string | null;
+	externalId?: string | null;
+	source?: string;
+
+	name?: string;
+	sportType?: string;
+
+	startDate?: string | null;
+	timezone?: string | null;
+	movingTime: number;
+	elapsedTime: number;
+
 	distance: number;
-	averageVelocity: number;
-	maxVelocity: number;
-	elevation: number;
-	burnCalories: number;
-	drivingTime: number;
+	totalElevationGain?: number;
+	elevHigh?: number | null;
+	elevLow?: number | null;
+
+	averageSpeed: number;
+	maxSpeed: number;
+
+	averageWatts?: number | null;
+	deviceWatts?: boolean;
+	kilojoules?: number | null;
+
+	averageCadence?: number | null;
+	averageHeartrate?: number | null;
+	maxHeartrate?: number | null;
+	hasHeartrate?: boolean;
+	calories?: number | null;
+	averageTemp?: number | null;
+
 	polyline?: string | null;
+	summaryPolyline?: string | null;
+	startLatlng?: [number, number] | null;
+	endLatlng?: [number, number] | null;
+
+	trainer?: boolean;
+	commute?: boolean;
+	manual?: boolean;
+
+	gearId?: string | null;
+
+	splits?: Omit<ActivitySplitResponse, "paceZone">[];
 }
 
 export interface UpdateActivityRequest {
-	activityAt?: string | null;
+	name?: string;
+	sportType?: string;
+	startDate?: string | null;
+	movingTime?: number;
+	elapsedTime?: number;
 	distance?: number;
-	averageVelocity?: number;
-	maxVelocity?: number;
-	elevation?: number;
-	burnCalories?: number;
-	drivingTime?: number;
+	totalElevationGain?: number;
+	elevHigh?: number | null;
+	elevLow?: number | null;
+	averageSpeed?: number;
+	maxSpeed?: number;
+	averageWatts?: number | null;
+	calories?: number | null;
 	polyline?: string | null;
+	summaryPolyline?: string | null;
+	trainer?: boolean;
+	commute?: boolean;
 }
