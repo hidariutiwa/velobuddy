@@ -62,50 +62,58 @@ export async function POST(request: Request): Promise<NextResponse> {
 		);
 	}
 
-	if (typeof raw.averageVelocity !== "number") {
+	if (typeof raw.movingTime !== "number") {
 		return NextResponse.json(
-			{ error: "averageVelocity is required and must be a number" },
+			{ error: "movingTime is required and must be a number" },
 			{ status: 400 },
 		);
 	}
 
-	if (typeof raw.maxVelocity !== "number") {
+	if (typeof raw.elapsedTime !== "number") {
 		return NextResponse.json(
-			{ error: "maxVelocity is required and must be a number" },
+			{ error: "elapsedTime is required and must be a number" },
 			{ status: 400 },
 		);
 	}
 
-	if (typeof raw.elevation !== "number") {
+	if (typeof raw.averageSpeed !== "number") {
 		return NextResponse.json(
-			{ error: "elevation is required and must be a number" },
+			{ error: "averageSpeed is required and must be a number" },
 			{ status: 400 },
 		);
 	}
 
-	if (typeof raw.burnCalories !== "number") {
+	if (typeof raw.maxSpeed !== "number") {
 		return NextResponse.json(
-			{ error: "burnCalories is required and must be a number" },
-			{ status: 400 },
-		);
-	}
-
-	if (typeof raw.drivingTime !== "number") {
-		return NextResponse.json(
-			{ error: "drivingTime is required and must be a number" },
+			{ error: "maxSpeed is required and must be a number" },
 			{ status: 400 },
 		);
 	}
 
 	const input: CreateActivityRequest = {
 		distance: raw.distance,
-		averageVelocity: raw.averageVelocity,
-		maxVelocity: raw.maxVelocity,
-		elevation: raw.elevation,
-		burnCalories: raw.burnCalories,
-		drivingTime: raw.drivingTime,
-		activityAt: typeof raw.activityAt === "string" ? raw.activityAt : null,
+		movingTime: raw.movingTime,
+		elapsedTime: raw.elapsedTime,
+		averageSpeed: raw.averageSpeed,
+		maxSpeed: raw.maxSpeed,
+		name: typeof raw.name === "string" ? raw.name : undefined,
+		sportType:
+			typeof raw.sportType === "string" ? raw.sportType : undefined,
+		startDate: typeof raw.startDate === "string" ? raw.startDate : null,
+		totalElevationGain:
+			typeof raw.totalElevationGain === "number"
+				? raw.totalElevationGain
+				: undefined,
+		elevHigh: typeof raw.elevHigh === "number" ? raw.elevHigh : undefined,
+		elevLow: typeof raw.elevLow === "number" ? raw.elevLow : undefined,
+		averageWatts:
+			typeof raw.averageWatts === "number" ? raw.averageWatts : undefined,
+		calories: typeof raw.calories === "number" ? raw.calories : undefined,
 		polyline: typeof raw.polyline === "string" ? raw.polyline : null,
+		summaryPolyline:
+			typeof raw.summaryPolyline === "string"
+				? raw.summaryPolyline
+				: null,
 	};
 
 	try {

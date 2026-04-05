@@ -26,6 +26,12 @@ model User {
     updatedAt          DateTime            @updatedAt
     userFavoritePlaces UserFavoritePlace[]
     activities         Activity[]
+
+    // Strava OAuth
+    stravaAthleteId    Int?     @unique
+    stravaAccessToken  String?
+    stravaRefreshToken String?
+    stravaTokenExpiresAt Int? // unix timestamp
 }
 
 model UserAddress {
@@ -76,17 +82,80 @@ model UserFavoritePlace {
 }
 
 model Activity {
-    id              Int       @id @default(autoincrement())
-    userId          Int
-    user            User      @relation(fields: [userId], references: [id])
-    activityAt      DateTime?
-    distance        Float
-    averageVelocity Float
-    maxVelocity     Float
-    elevation       Float
-    burnCalories    Float
-    drivingTime     Int
-    polyline        String?
-    createdAt       DateTime  @default(now())
-    updatedAt       DateTime  @updatedAt
+    id        Int  @id @default(autoincrement())
+    userId    Int
+    user      User @relation(fields: [userId], references: [id])
+
+    // Strava identification
+    stravaId   BigInt?  @unique
+    externalId String? // e.g. "Cycle-20260329-2128-85940.fit"
+    source     String   @default("manual") // "strava" or "manual"
+
+    // Basic info
+    name      String  @default("")
+    sportType String  @default("Ride") // "Ride", "EBikeRide", "VirtualRide"
+
+    // Time
+    startDate   DateTime? // UTC start time
+    timezone    String? // e.g. "(GMT+09:00) Asia/Tokyo"
+    movingTime  Int // seconds of actual movement
+    elapsedTime Int // total seconds including stops
+
+    // Distance & elevation (meters)
+    distance           Float // meters
+    totalElevationGain Float  @default(0) // meters
+    elevHigh           Float? // highest point (meters)
+    elevLow            Float? // lowest point (meters)
+
+    // Speed (m/s)
+    averageSpeed Float // m/s
+    maxSpeed     Float // m/s
+
+    // Power (estimated or device)
+    averageWatts Float?
+    deviceWatts  Boolean @default(false)
+    kilojoules   Float?
+
+    // Optional metrics
+    averageCadence   Float?
+    averageHeartrate Float?
+    maxHeartrate     Float?
+    hasHeartrate     Boolean @default(false)
+    calories         Float?
+    averageTemp      Float? // Celsius
+
+    // Map data
+    polyline        String? // full polyline (detail)
+    summaryPolyline String? // simplified polyline (list)
+    startLatlng     Json? // [lat, lng]
+    endLatlng       Json? // [lat, lng]
+
+    // Classification flags
+    trainer Boolean @default(false)
+    commute Boolean @default(false)
+    manual  Boolean @default(false)
+
+    // Metadata
+    gearId String? // Strava gear ID
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // Relations
+    splits ActivitySplit[]
+}
+
+model ActivitySplit {
+    id         Int      @id @default(autoincrement())
+    activityId Int
+    activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+    split               Int // 1-based split index
+    distance            Float // meters
+    elapsedTime         Int // seconds
+    movingTime          Int // seconds
+    elevationDifference Float // meters (can be negative)
+    averageSpeed        Float // m/s
+    paceZone            Int   @default(0)
+
+    @@unique([activityId, split])
 }

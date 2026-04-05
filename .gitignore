@@ -48,3 +48,6 @@ next-env.d.ts
 *.skill
 
 /src/lib/generated/prisma
+
+# strava API responses (contains personal data)
+scripts/strava/responses/
