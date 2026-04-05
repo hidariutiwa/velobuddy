@@ -26,6 +26,7 @@ model User {
     updatedAt          DateTime            @updatedAt
     userFavoritePlaces UserFavoritePlace[]
     activities         Activity[]
+    monthlySummaries   MonthlyActivitySummary[]
 
     // Strava OAuth
     stravaAthleteId    Int?     @unique
@@ -158,4 +159,19 @@ model ActivitySplit {
     paceZone            Int   @default(0)
 
     @@unique([activityId, split])
+}
+
+model MonthlyActivitySummary {
+    id              Int      @id @default(autoincrement())
+    userId          Int
+    user            User     @relation(fields: [userId], references: [id])
+    year            Int
+    month           Int // 1-12
+    totalDistance    Float // meters
+    totalMovingTime Int // seconds
+    activityCount   Int
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+
+    @@unique([userId, year, month])
 }

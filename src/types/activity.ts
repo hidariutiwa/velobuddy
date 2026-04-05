@@ -102,6 +102,14 @@ export interface CreateActivityRequest {
 	splits?: Omit<ActivitySplitResponse, "paceZone">[];
 }
 
+export interface MonthlySummary {
+	totalDistance: number; // meters
+	totalMovingTime: number; // seconds
+	activityCount: number;
+	year: number;
+	month: number;
+}
+
 export interface UpdateActivityRequest {
 	name?: string;
 	sportType?: string;
