@@ -1,5 +1,6 @@
 "use client";
 import { FilterBar } from "@/components/filter/FilterBar";
+import { Loader } from "@/components/utils/Loader";
 import { PlaceCard } from "@/components/utils/place";
 import { SearchBar } from "@/components/utils/search";
 import { isOpenNow } from "@/lib/utils/openingHours";
@@ -15,6 +16,7 @@ import { useEffect, useMemo, useState } from "react";
 export default function PlaceSearchView() {
 	const [places, setPlaces] = useState<PlaceCache[]>([]);
 	const [filter, setFilter] = useState<FilterOptions>({});
+	const [isSearching, setIsSearching] = useState(false);
 	const { status } = useSession();
 	const [favoritesMap, setFavoritesMap] = useState<Map<string, number>>(
 		new Map(),
@@ -40,6 +42,7 @@ export default function PlaceSearchView() {
 	}, [status]);
 
 	const handleSearch = async (query: string) => {
+		setIsSearching(true);
 		try {
 			const res = await fetch(
 				`/api/places/search?q=${encodeURIComponent(query)}`,
@@ -49,6 +52,8 @@ export default function PlaceSearchView() {
 			setPlaces(data.places ?? []);
 		} catch (err) {
 			console.error(err);
+		} finally {
+			setIsSearching(false);
 		}
 	};
 
@@ -149,7 +154,7 @@ export default function PlaceSearchView() {
 				showFavoriteFilter={true}
 			/>
 			<div className="flex h-0 w-full grow flex-col justify-start gap-4 overflow-y-auto">
-				{cards}
+				{isSearching ? <Loader label="検索中..." /> : cards}
 			</div>
 		</div>
 	);
