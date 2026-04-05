@@ -52,8 +52,12 @@ export default async function Page() {
 	return (
 		<MainContainer>
 			<div className="relative flex h-full w-full flex-col gap-4">
-				<p>アクティビティ一覧</p>
-				<MonthlySummaryCard summary={currentMonthSummary} />
+				<div className="px-2 pt-2">
+					<p className="text-lg font-bold">アクティビティ一覧</p>
+				</div>
+				<div className="h-fit w-full px-4">
+					<MonthlySummaryCard summary={currentMonthSummary} />
+				</div>
 				<ActivityList initialActivities={activities} />
 				<div className="absolute bottom-0 flex h-fit w-full items-center justify-between gap-4 p-4">
 					<StravaSyncButton stravaConnected={stravaTokens !== null} />
