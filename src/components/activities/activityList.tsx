@@ -14,7 +14,7 @@ export default function ActivityList({
 	return (
 		<div className="flex h-0 w-full grow flex-col gap-4 overflow-y-auto">
 			{activities.length === 0 ? (
-				<p>アクティビティがありません</p>
+				<p className="ml-4">アクティビティがありません</p>
 			) : (
 				activities.map((activity) => (
 					<ActivitySheet
